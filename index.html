@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.8.9</title>
+<title>Easy Aurora Forecast v. t1.9.0</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -172,7 +172,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.8.9</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.9.0</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -203,7 +203,18 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 
     <div class="card" id="card-main-result">
+
+    /* 画像を表示 */
     <div id="total-label" class="label-main">Overall Probability</div>
+    <div id="possibility-image-area" style="text-align: center; margin: 10px 0;">
+        <img id="status-icon" src="low.png" alt="Status" style="width: 100px; height: auto; display: block; margin: 0 auto;">
+    </div>
+<    div id="overall-possibility" class="value-main">---</div>
+
+
+
+
+
     <div id="total-sub-label" class="label-sub-current">Status:</div>
     <button id="result" class="badge badge-large low" onclick="openModal(); event.stopPropagation();" style="border: none; width: auto; display: inline-block;">--</button>
     
@@ -888,6 +899,29 @@ function calculateTotal() {
     const resEl = document.getElementById("result");
     resEl.textContent = score >= 70 ? "High" : (score >= 35 ? "Possible" : "Low");
     resEl.className = `badge badge-large ${score >= 70 ? 'high' : (score >= 35 ? 'mid' : 'low')}`;
+
+// 2. ★画像切り替えの追加★
+    const icon = document.getElementById("status-icon");
+    if (icon) {
+        if (status === "High") {
+            icon.src = "high.png";
+        } else if (status === "Possible") {
+            icon.src = "possible.png";
+        } else if (status === "Low") {
+            // 現在の雲量（cloudValなど）を取得して判定
+            // ※「現在」の雲量を表示している要素の数値を確認します
+            const currentCloudText = document.getElementById("cloud-val")?.textContent || "0";
+            const currentCloud = parseInt(currentCloudText);
+
+            if (currentCloud >= 70) {
+                icon.src = "cloud.png"; // 雲が多すぎる場合
+            } else {
+                icon.src = "low.png";   // 単純にKp指数などが低い場合
+            }
+        }
+        // 画像をフェードインさせるなどの演出を入れる場合はここに icon.style.opacity = 1;
+    }
+
 
     // モーダルや詳細表示用の数値も更新
     const pctEl = document.getElementById("score-pct");
