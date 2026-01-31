@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.10.8</title>
+<title>Easy Aurora Forecast v. t1.11.0</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -189,7 +189,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.8</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.11.0</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -241,13 +241,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 
     <div class="last-updated" id="time-update-all">Last Update: --:--:--</div>
 
-
-
-
-
-
-
-
     
     <div class="switch-container" style="position: absolute; top: 15px; right: 22px; margin-top: 0; display: flex; flex-direction: column; align-items: flex-end;">
     	<div style="display: flex; align-items: center; gap: 10px;">
@@ -284,16 +277,35 @@ input:checked + .slider:before { transform: translateX(20px); }
             <div id="oval-prob" style="font-size: 0.9rem; color: #8b949e; margin: 10px 0;"></div>
         </div>
 
+
+
+
+
         <div class="card" id="card-kp-group">
             <div class="label-main">Kp Index</div>
             <div class="label-sub-current">Current:</div>
+            
+
             <div id="kp" class="badge low">--</div>
             <div class="sub-section" id="card-kp3">
                 <div style="font-size: 0.8rem; color: #8b949e; margin-bottom: 5px;">Short Forecast:</div>
+
                 <div id="kp-short" class="value" style="font-size: 0.85rem; color: #5bc0be;">Ref 3-day forecast (NOAA)</div>
+<!--        テーブル
                 <pre id="kpForecast" style="margin-top:10px;">--</pre>
             </div>
+-->            
+            <div class="chart-container" style="position: relative; height:200px; width:100%">
+                <canvas id="kpLineChart"></canvas>
+            </div>
         </div>
+
+
+
+
+
+
+
 
         <div class="card" id="card-cloud-group">
             <div class="label-main">Cloud Cover</div>
@@ -306,6 +318,17 @@ input:checked + .slider:before { transform: translateX(20px); }
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -825,22 +848,142 @@ async function checkOval() {
     }
 }
 
+let myLineChart = null; // グラフを保持する変数
+
 async function fetchKp3DayForecast() {
     try {
         const res = await fetch(CORS + encodeURIComponent(FORECAST_URL));
-        
-        // GASプロキシがNOAAのテキストファイルをそのまま返してくる
-        // JSON形式ではなくテキストとして受け取るため、ここだけ .text() にします
         const text = await res.text(); 
         
+        // 1. テキストからデータの行を抽出
+        // NOAAのフォーマットから 00-03UT などの時間帯とKp値を抜き出す
+        const lines = text.split('\n');
+        let dates = [];
+        let dataPoints = []; // { label: "日付 時間", value: Kp値 }
+
+        // 1.テキスト内の "00-03UT" といったパターンの行を探して数値を抽出 (例: "            Jan 31      Feb 01      Feb 02")
+        lines.forEach(line => {
+            const dateMatch = line.match(/([A-Z][a-z]{2}\s+\d{2})/g);
+            if (dateMatch && dateMatch.length >= 3) {
+                dates = dateMatch; // 3日分の日付を取得
+            }
+        });
+
+        // 2. Kp値の行を処理 (例: "00-03UT      2.33        3.00        1.67")
+        lines.forEach(line => {
+            const timeMatch = line.match(/(\d{2}-\d{2})UT\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+            if (timeMatch && dates.length >= 3) {
+                // 3日分のデータが含まれるので、簡易的に時間ラベルと値を収集
+                // 実際には日付も考慮するとより正確ですが、まずは時間帯で並べます
+                const hourRange = timeMatch[1]; // "00-03"
+                
+                // 3日分それぞれのデータをラベル付きで保存
+                for (let i = 0; i < 3; i++) {
+                    dataPoints.push({
+                        label: `${dates[i]} ${hourRange}`, // "Jan 31 00-03"
+                        value: parseFloat(timeMatch[i + 2]),
+                        dayIndex: i // 並び替え用
+                    });
+                }
+            }
+        });
+
+        // 3. 時系列順に並び替え（1日目、2日目、3日目の順）
+        dataPoints.sort((a, b) => {
+            // 日付インデックスで比較し、同じ日なら時間帯で比較
+            if (a.dayIndex !== b.dayIndex) return a.dayIndex - b.dayIndex;
+            return a.label.localeCompare(b.label);
+        });
+
+        const labels = dataPoints.map(p => p.label);
+        const values = dataPoints.map(p => p.value);
+
+        // 2. グラフの描画呼び出し
+        if (labels.length > 0) {
+            drawKpChart(labels, values);
+        }
+        
+        // 従来のテキスト表示（念のため残す）
         const match = text.match(/NOAA Kp index breakdown[\s\S]*?(?=\n[A-Z]|$)/i);
         const el = document.getElementById("kpForecast");
-        if (el) {
-            el.innerText = match ? match[0].trim() : "Updating...";
-        }
+        if (el) el.innerText = match ? match[0].trim() : "Updating...";
+        
+
     } catch (e) {
         console.error("Forecast Error:", e);
     }
+}
+
+
+
+function drawKpChart(labels, values) {
+    const ctx = document.getElementById('kpLineChart').getContext('2d');
+    if (myLineChart) myLineChart.destroy(); // 既存のグラフがあれば破棄
+
+    myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Kp Index',
+                data: values,
+                borderColor: '#5bc0be',
+                backgroundColor: 'rgba(91, 192, 190, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4, // 滑らかな曲線に
+                pointRadius: 2 // 点を少し小さくしてスッキリさせる
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    min: 0, 
+                    max: 9, 
+                    ticks: { stepSize: 1, color: '#8b949e' },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                x: {
+                    grid: {
+                        display: true,
+                        color: (context) => { // colorの宣言
+                            // ラベルに "00-03" が含まれる場合（日の境目）は線を強調
+                            const label = context.tick ? labels[context.index] : "";
+                            return label && label.includes("00-03") 
+                                ? 'rgba(255, 255, 255, 0.4)' // 境目の線の色（白っぽく）
+                                : 'rgba(255, 255, 255, 0.05)'; // 通常の線の色
+                        },
+                        lineWidth: (context) => {
+                            const label = context.tick ? labels[context.index] : "";
+                            return label && label.includes("00-03") ? 2 : 1; // 境目だけ太くする
+                        }
+                    
+                    },
+                    // オプション追加
+                    ticks: {
+                        color: '#8b949e',
+                        font: { size: 10 },
+                        maxRotation: 0, // 最大0度傾ける
+                        minRotation: 0, // 常に0度傾けて固定
+                        autoSkip: false,   // 自動で間引かない
+                        overflow: 'allow', // 枠からはみ出しても表示する
+                        callback: function(value, index) {
+                            const label = labels[index];
+                            return label && label.includes("00-03") ? label : "";
+                            // この表記は「0時ちょうど」という点ではなく、「0時00分から03時00分までの3時間」という期間（スロット）を表しています。
+                        //autoSkip: true,  // 重なりそうな時に自動でラベルを飛ばす
+                        // maxTicksLimit: 9 // 画面幅に合わせて表示するラベル数を制限（3日分なら9個程度が綺麗です）
+                        }
+                    }
+                }
+            },
+            plugins: { 
+                legend: { display: false } 
+            }
+        }
+    });
 }
 
 async function getCloud(isDaytime = false) {
@@ -1294,6 +1437,9 @@ function scheduleNextUpdate() {
 
 // 最初のスケジュールを開始(初回実行のトリガー（ページ読み込み時など）)
 scheduleNextUpdate();
+
+
+
 
 
 </script>
