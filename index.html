@@ -868,7 +868,7 @@ async function getCloud(isDaytime = false) {
             let displayValue;
             if (val <= 5) {
                 displayValue = "Clear";
-            } else if (val >= 95) {
+            } else if (val >= 99) {
                 displayValue = "Overcast";
             } else {
                 displayValue = val + "%";
@@ -915,8 +915,8 @@ async function shortForecast() {
 
     // 0%と100%を避けるフォーマット関数
     const formatCloud = (val) => {
-        if (val <= 0) return "< 1%";
-        if (val >= 100) return "> 99%";
+        if (val <= 0) return "Clear";
+        if (val >= 100) return "Overcast";
         return val + "%";
     };
 
