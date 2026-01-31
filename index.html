@@ -207,8 +207,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 
     <div id="total-label" class="label-main">Overall Probability</div>
-    <div id="possibility-image-area" style="text-align: left; margin: 10px 0;">
-        <img id="status-icon" src="low.png" alt="Status" style="width: 150px; height: auto; display: block; margin: 0;">
+    <div id="possibility-image-area" style="text-align: center; margin: 10px 0;">
+        <img id="status-icon" src="low.png" alt="Status" style="width: 200px; height: auto; display: block; margin: 0 auto;">
     </div>
 
 
@@ -1085,18 +1085,54 @@ function toggleData() {
     h.style.display = isH ? "block" : "none";
 }
 
-// --- 7. 定期実行タイマー (15分ごとに自動更新) ---
-// 15分 = 15分 * 60秒 * 1000ミリ秒 = 900,000ms
-setInterval(() => {
-    console.log("Auto-updating data...");
-    updateAll();
-}, 900000);
+
+/**
+ * 次回の更新スケジュールを管理する関数
+ */
+/**
+ * 次回の更新スケジュールを管理する関数
+ * これが setInterval の代わりになります
+ */
+function scheduleNextUpdate() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    // 昼間 (3:00 - 21:00) は 60分、夜間は 15分
+    const intervalMinutes = (hour >= 3 && hour < 21) ? 60 : 15;
+    const intervalMs = intervalMinutes * 60 * 1000;
+
+    console.log(`[Timer] 次回の自動更新は ${intervalMinutes} 分後です。`);
+
+    // 重複動作を防ぐために既存のタイマーをクリア
+    if (window.autoUpdateTimeout) {
+        clearTimeout(window.autoUpdateTimeout);
+    }
+
+    // 指定時間後に実行
+    window.autoUpdateTimeout = setTimeout(async () => {
+        console.log("Auto-update execution started.");
+        
+        try {
+            await updateAll(); // ここで既存の updateAll を呼び出す
+        } catch (e) {
+            console.error("Auto-update error:", e);
+        }
+
+        // 実行が終わったら、また次のスケジュールを立てる（再帰呼び出し）
+        scheduleNextUpdate();
+    }, intervalMs);
+}
+
+// ページ読み込み時に最初のタイマーをセット
+scheduleNextUpdate();
+
+// 最初のスケジュールを開始(初回実行のトリガー（ページ読み込み時など）)
+scheduleNextUpdate();
+
 
 </script>
 </body>
 </html>
-
-
 
 
 
