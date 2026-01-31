@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.10.6</title>
+<title>Easy Aurora Forecast v. t1.10.2</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -179,7 +179,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.6</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.1</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -301,17 +301,17 @@ input:checked + .slider:before { transform: translateX(20px); }
             </ul>
         </div>
 
-        <div id="radar-container" style="position: relative; width: 100%; max-width: 500px; height: 450px; margin: 0 auto 15px;">
+        <div id="radar-container" style="position: relative; width: 100%; max-width: 280px; height: 260px; margin: 0 auto 15px;">
             <canvas id="radarChart"></canvas>
             <div id="chart-center-pct" style="
                 position: absolute; 
-                top: 52%; 
+                top: 55%; 
                 left: 50%; 
                 transform: translate(-50%, -50%); 
-                font-size: 3.5rem; 
+                font-size: 2.2rem; 
                 font-weight: bold; 
                 color: #fff;
-                text-shadow: 0 0 15px rgba(0,255,150,0.8);
+                text-shadow: 0 0 10px rgba(0,255,150,0.8);
                 pointer-events: none;
             ">--%</div>
         </div>
@@ -984,14 +984,6 @@ function updateRadarChart() {
                 }]
             },
             options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				animation: {
-                    duration: 800,    // 1.5秒かけてゆっくり「にゅいーん」と伸ばす
-                    easing: 'easeOutQuart' // 最初は速く、最後はふわっと止まる動き
-				layout: {
-                    padding: 10 // 外側の余白を最小限にしてグラフを最大化
-				},
                 plugins: { legend: { display: false } },
                 scales: {
                     r: {
@@ -1004,6 +996,7 @@ function updateRadarChart() {
                         pointLabels: { color: '#8b949e', font: { size: 10 } }
                     }
                 },
+                animation: { duration: 800 }
             }
         });
     }
@@ -1214,7 +1207,6 @@ scheduleNextUpdate();
 </script>
 </body>
 </html>
-
 
 
 
