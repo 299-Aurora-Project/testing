@@ -179,7 +179,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.1</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.2</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -301,11 +301,17 @@ input:checked + .slider:before { transform: translateX(20px); }
             </ul>
         </div>
 
-        <div id="radar-container" style="position: relative; width: 100%; max-width: 400px; height: 450px; margin: 0 auto 15px;">
+        <div id="radar-container" style="
+            position: relative; 
+            max-width: 500px; 
+            height: 300px; /* 360pxからさらに縮小 */
+            margin: 0 auto -40px; /* ネガティブマージンをさらに強く設定 */
+            overflow: hidden; /* はみ出しをカットして密着させる */
+        ">
             <canvas id="radarChart"></canvas>
             <div id="chart-center-pct" style="
                 position: absolute; 
-                top: 55%; 
+                top: 50%; 
                 left: 50%; 
                 transform: translate(-50%, -50%); 
                 font-size: 2.2rem; 
@@ -313,6 +319,7 @@ input:checked + .slider:before { transform: translateX(20px); }
                 color: #fff;
                 text-shadow: 0 0 10px rgba(0,255,150,0.8);
                 pointer-events: none;
+                line-height: 1; /* 行間の余白を詰めて垂直中央を正確に */
             ">--%</div>
         </div>
 
@@ -984,9 +991,23 @@ function updateRadarChart() {
                 }]
             },
             options: {
-                plugins: { legend: { display: false } },
+               responsive: true,
+               maintainAspectRatio: false,
+               // ★ 1. 余白（レイアウト）をゼロに設定
+               layout: {
+                  padding: {
+                     top: 0,
+                     bottom: 0,
+                     left: 0,
+                     right: 0,
+                  }
+               },
+
+                plugins: { legend: { display: false } 
+                },
                 scales: {
                     r: {
+                        startAngle: 0, // グラフの開始角度を0度に固定
                         min: 0,
                         max: 100,
                         beginAtZero: true,
