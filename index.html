@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.11.0</title>
+<title>Easy Aurora Forecast v. t1.11.1</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -189,7 +189,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.11.0</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.11.1</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -414,6 +414,11 @@ let myLat = null, myLon = null, currentTotalScore = 0, lastAuroraProb = 0;
 let notifLat = null, notifLon = null, notifName = ""; // 通知用ロケーションを保持する変数
 let cachedAuroraData = null, map = null, auroraLayer = null, userMarker = null, cloudDataHourly = null;
 let searchTimer = null, lastScrollPos = 0;
+
+
+let savedScrollY = 0; // スクロール位置を覚える
+
+
 
 // --- 2. 初期化処理 (DOMContentLoaded) ---
 document.addEventListener('DOMContentLoaded', async () => {
@@ -936,6 +941,7 @@ function drawKpChart(labels, values) {
             }]
         },
         options: {
+            animation: false,
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -1326,6 +1332,7 @@ function updateMapMarker(targetLat = myLat, targetLon = myLon) {
 }
 
 function showMapScreen() {
+    savedScrollY = window.scrollY; // 今のスクロール位置を記録
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('map-screen').style.display = 'block';
     setTimeout(() => { initMap(); map.invalidateSize(); }, 100);
@@ -1334,6 +1341,9 @@ function showMapScreen() {
 function hideMapScreen() {
     document.getElementById('map-screen').style.display = 'none';
     document.getElementById('home-screen').style.display = 'block';
+    
+    // メイン画面が表示された直後に、元の位置へジャンプ
+    window.scrollTo(0, savedScrollY);
 }
 
 function setItemLoading(id, isLoading) {
@@ -1445,7 +1455,6 @@ scheduleNextUpdate();
 </script>
 </body>
 </html>
-
 
 
 
