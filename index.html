@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.10.7</title>
+<title>Easy Aurora Forecast v. t1.10.8</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -189,7 +189,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.7</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.8</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -933,37 +933,55 @@ async function shortForecast() {
 let myRadarChart = null;
 
 function calculateTotal() {
-    // 1. 各要素の取得と数値化
+    // 1. 各要素の取得
     const kp = parseFloat(document.getElementById("kp").textContent) || 0;
     const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
     const icon = document.getElementById("status-icon");
 
-    // 2. 基本スコア計算
+    // 2. 基本スコア計算（維持：AuroraProbとKpの加算）
     let score = (lastAuroraProb * 1.2) + (kp * 10);
     
-    // 低緯度・遠距離フィルター
+    // 【維持】低緯度・遠距離フィルター
     if (lastAuroraProb < 5) score *= 0.01;
 
-    // 雲量による最終減衰 (表示上のスコアに反映)
+    // 【維持】雲量による最終減衰
     let finalScore = score;
     if (cloud > 85) finalScore *= 0.1;
 
-    // 3. 表示テキストとバッジ色の決定
-    const resultStatus = finalScore >= 70 ? "High" : (finalScore >= 35 ? "Possible" : "Low");
+    // 数値をグローバル変数に保持
+    currentTotalScore = finalScore;
+
+    // 3. 表示テキストとバッジ色の決定（判定基準をGASと同期: 50/35）
     const resEl = document.getElementById("result");
     if (resEl) {
-        resEl.textContent = resultStatus;
-        resEl.className = `badge badge-large ${resultStatus.toLowerCase()}`;
+        resEl.classList.remove("low", "mid", "high"); // 古い色を掃除
+
+        let statusText = "";
+        let statusClass = "";
+
+        if (finalScore >= 50) {
+            statusText = "High";
+            statusClass = "high";
+        } else if (finalScore >= 35) {
+            statusText = "Possible";
+            statusClass = "mid";
+        } else {
+            statusText = "Low";
+            statusClass = "low";
+        }
+
+        resEl.textContent = statusText;
+        resEl.classList.add(statusClass); // 新しい色を付与
     }
 
-    // 4. 画像アイコンの切り替え
+    // 4. 画像の切り替え
     if (icon) {
-        if (resultStatus === "High") {
+        if (finalScore >= 50) {
             icon.src = "high.png";
-        } else if (resultStatus === "Possible") {
+        } else if (finalScore >= 35) {
             icon.src = "possible.png";
         } else {
-            // Lowかつ「もし晴れていればチャンスがあった」場合は雲アイコン
+            // Lowかつ「もし晴れていればチャンスがあった(35以上)」場合は雲バージョン
             if (score >= 35 && cloud >= 70) {
                 icon.src = "cloud.png";
             } else {
@@ -972,11 +990,41 @@ function calculateTotal() {
         }
     }
 
-    // 数値を保持
-    currentTotalScore = finalScore;
+    // 5. パーセント表示の更新
     const pctEl = document.getElementById("score-pct");
-    if (pctEl) pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : Math.round(finalScore) + "%"));
+    if (pctEl) {
+        pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : Math.round(finalScore) + "%"));
+    }
 }
+
+
+
+
+
+    const resEl = document.getElementById("result");
+    const targetScore = currentTotalScore; // ここで currentTotalScore を使う
+
+    resEl.classList.remove("low", "mid", "high");
+
+    let statusText = "";
+    let statusClass = "";
+
+    // 'score' ではなく 'targetScore' (中身はcurrentTotalScore) で判定
+    if (targetScore >= 50) {
+        statusText = "High";
+        statusClass = "high";
+    } else if (targetScore >= 35) {
+        statusText = "Possible";
+        statusClass = "mid";
+    } else {
+        statusText = "Low";
+        statusClass = "low";
+    }
+
+    resEl.textContent = statusText;
+    resEl.classList.add(statusClass);
+    
+    
 
 /**
  * レーダーチャートを更新する関数
@@ -1251,6 +1299,7 @@ scheduleNextUpdate();
 </script>
 </body>
 </html>
+
 
 
 
