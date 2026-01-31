@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.10.1</title>
+<title>Easy Aurora Forecast v. t1.10.2</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -179,7 +179,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.0</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.1</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -1112,17 +1112,16 @@ function setItemLoading(id, isLoading) {
 function closeWelcome() { document.getElementById('welcome-overlay').style.display = 'none'; }
 
 function openModal() { 
-    let displayScore = "";
-    if (currentTotalScore < 1) {
-        displayScore = "< 1%";
-    } else if (currentTotalScore > 99) {
-        displayScore = "> 99%";
-    } else {
-        displayScore = Math.round(currentTotalScore) + "%";
-    }
-    
-    document.getElementById("score-pct").textContent = displayScore;
+    // モーダルを表示
     document.getElementById("detailModal").style.display = "flex"; 
+    
+    // スコアの表示（もしHTMLに score-pct が残っていれば更新、なければスキップ）
+    const pctText = currentTotalScore < 1 ? "< 1%" : (currentTotalScore > 99 ? "> 99%" : Math.round(currentTotalScore) + "%");
+    const pctEl = document.getElementById("score-pct");
+    if (pctEl) pctEl.textContent = pctText;
+
+    // チャートを描画（この中の処理で chart-center-pct を更新します）
+    setTimeout(updateRadarChart, 100);
 }
 
 function closeModal() { document.getElementById("detailModal").style.display = "none"; }
