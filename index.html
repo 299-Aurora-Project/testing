@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.10.4</title>
+<title>Easy Aurora Forecast v. t1.10.5</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -179,7 +179,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.4</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.5</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -994,10 +994,11 @@ function updateRadarChart() {
                     r: {
                         min: 0,
                         max: 100,
+                        beginAtZero: true,
                         ticks: { display: false, stepSize: 25 },
                         grid: { color: 'rgba(255, 255, 255, 0.1)' },
                         angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
-                        pointLabels: { color: '#5bc0be', font: { size: 14, weight: 'bold' } }
+                        pointLabels: { color: '#8b949e', font: { size: 10 } }
                     }
                 },
                 animation: { duration: 800 }
