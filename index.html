@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Aurora Forecast v. t1.9.2</title>
+<title>Easy Aurora Forecast v. t1.10.1</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b132b">
 <link rel="apple-touch-icon
@@ -159,6 +159,13 @@ pre { background:#0b132b; padding:12px; border-radius:8px; font-family: monospac
 input:checked + .slider { background-color: #5bc0be; }
 input:checked + .slider:before { transform: translateX(20px); }
 </style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+
 </head>
 <body onkeydown="closeWelcome()" onclick="closeWelcome(); closeAllLists();">
 
@@ -172,7 +179,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.9.2</span></h1>
+            <h1>🌌 Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.10.0</span></h1>
         </div>
         <div class="produce-by">Produce by Shin</div>
     </div>
@@ -277,19 +284,39 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 </div>
 
+
+
+
+
 <div id="detailModal" class="modal-overlay" onclick="closeModal()">
     <div class="modal-content">
         <div class="modal-title">Probability Details</div>
-        <div class="score-big"><span id="score-pct">--</span></div>
-        <div style="font-size: 0.85rem; margin-bottom: 15px;">
-            <div style="border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-bottom: 15px; background: #0b132b;">
-                <strong style="color: #5bc0be;">Thresholds:</strong>
-                <ul style="margin: 5px 0; padding-left: 20px;">
-                    <li><span style="color: #dc2626;">High</span>: 70% or more</li>
-                    <li><span style="color: #ca8a04;">Possible</span>: 35% to 69%</li>
-                    <li><span style="color: #8b949e;">Low</span>: Under 35%</li>
-                </ul>
-            </div>
+        
+        <div style="border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-bottom: 15px; background: #0b132b;">
+            <strong style="color: #5bc0be;">Thresholds:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px; font-size: 0.85rem;">
+                <li><span style="color: #dc2626;">High</span>: 70% or more</li>
+                <li><span style="color: #ca8a04;">Possible</span>: 35% to 69%</li>
+                <li><span style="color: #8b949e;">Low</span>: Under 35%</li>
+            </ul>
+        </div>
+
+        <div id="radar-container" style="position: relative; width: 100%; max-width: 280px; height: 260px; margin: 0 auto 15px;">
+            <canvas id="radarChart"></canvas>
+            <div id="chart-center-pct" style="
+                position: absolute; 
+                top: 55%; 
+                left: 50%; 
+                transform: translate(-50%, -50%); 
+                font-size: 2.2rem; 
+                font-weight: bold; 
+                color: #fff;
+                text-shadow: 0 0 10px rgba(0,255,150,0.8);
+                pointer-events: none;
+            ">--%</div>
+        </div>
+
+        <div style="font-size: 0.85rem;">
             <strong>Optimized Logic (v t1.0.13+):</strong>
             <table class="detail-table">
                 <tr><th>Item</th><th>Max</th><th>Details</th></tr>
@@ -304,6 +331,9 @@ input:checked + .slider:before { transform: translateX(20px); }
         </div>
     </div>
 </div>
+
+
+
 
 <div id="map-screen">
     <button class="btn" id="back-btn" onclick="hideMapScreen();">← Back</button>
@@ -869,66 +899,114 @@ async function shortForecast() {
     }
 }
 
+// --- レーダーチャート保持用の変数 ---
+let myRadarChart = null;
+
 function calculateTotal() {
-    let kp = parseFloat(document.getElementById("kp").dataset.value) || 0;
-    let cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
-    
-    // 基本スコア：Kpの影響力を維持しつつ計算
+    // 1. 各要素の取得と数値化
+    const kp = parseFloat(document.getElementById("kp").textContent) || 0;
+    const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
+    const icon = document.getElementById("status-icon");
+
+    // 2. 基本スコア計算
     let score = (lastAuroraProb * 1.2) + (kp * 10);
     
-    // 【低緯度補正をさらに厳格化】
-    // オーロラ確率が非常に低い（＝オーロラ帯から物理的に遠い）場所は
-    // Kpが多少高くても、オーロラ予報としてはほぼ0に固定する
-    if (lastAuroraProb < 5) {
-        score *= 0.01; // 以前の0.1から0.01へ（さらに1/10に）
-    }
+    // 低緯度・遠距離フィルター
+    if (lastAuroraProb < 5) score *= 0.01;
 
-    // 雲量による減衰（85%以上なら大幅ダウン）
-    if (cloud > 85) score *= 0.1;
-    
-    // --- 表示の調整 (< 1%, > 99%) ---
-    let displayScore = "";
-    if (score < 1) {
-        displayScore = "< 1%";
-    } else if (score > 99) {
-        displayScore = "> 99%";
-    } else {
-        displayScore = Math.round(score) + "%";
-    }
+    // 雲量による最終減衰 (表示上のスコアに反映)
+    let finalScore = score;
+    if (cloud > 85) finalScore *= 0.1;
 
-    // 画面への表示
+    // 3. 表示テキストとバッジ色の決定
+    const resultStatus = finalScore >= 70 ? "High" : (finalScore >= 35 ? "Possible" : "Low");
     const resEl = document.getElementById("result");
-    resEl.textContent = score >= 70 ? "High" : (score >= 35 ? "Possible" : "Low");
-    resEl.className = `badge badge-large ${score >= 70 ? 'high' : (score >= 35 ? 'mid' : 'low')}`;
+    if (resEl) {
+        resEl.textContent = resultStatus;
+        resEl.className = `badge badge-large ${resultStatus.toLowerCase()}`;
+    }
 
-// 2. ★画像切り替えの追加★
-    const icon = document.getElementById("status-icon");
+    // 4. 画像アイコンの切り替え
     if (icon) {
-        if (status === "High") {
+        if (resultStatus === "High") {
             icon.src = "high.png";
-        } else if (status === "Possible") {
+        } else if (resultStatus === "Possible") {
             icon.src = "possible.png";
-        } else if (status === "Low") {
-            // 現在の雲量（cloudValなど）を取得して判定
-            // ※「現在」の雲量を表示している要素の数値を確認します
-            const currentCloudText = document.getElementById("cloud-val")?.textContent || "0";
-            const currentCloud = parseInt(currentCloudText);
-
-            if (currentCloud >= 70) {
-                icon.src = "cloud.png"; // 雲が多すぎる場合
+        } else {
+            // Lowかつ「もし晴れていればチャンスがあった」場合は雲アイコン
+            if (score >= 35 && cloud >= 70) {
+                icon.src = "cloud.png";
             } else {
-                icon.src = "low.png";   // 単純にKp指数などが低い場合
+                icon.src = "low.png";
             }
         }
-        // 画像をフェードインさせるなどの演出を入れる場合はここに icon.style.opacity = 1;
     }
 
-
-    // モーダルや詳細表示用の数値も更新
+    // 数値を保持
+    currentTotalScore = finalScore;
     const pctEl = document.getElementById("score-pct");
-    if (pctEl) pctEl.textContent = displayScore;
-    
-    currentTotalScore = score; // 内部数値は計算用に保持
+    if (pctEl) pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : Math.round(finalScore) + "%"));
+}
+
+/**
+ * レーダーチャートを更新する関数
+ */
+function updateRadarChart() {
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    const kp = parseFloat(document.getElementById("kp").textContent) || 0;
+    const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
+
+    // 3軸のデータを 0-100 に正規化
+    const dataValues = [
+        Math.min(lastAuroraProb * 2, 100), // Oval/Horizon (50%以上で満点)
+        Math.min(kp * 12.5, 100),         // Magnetic (Kp 8以上で満点)
+        Math.max(100 - cloud, 0)          // Sky (快晴で満点)
+    ];
+
+    // 中央の％表示を更新
+    const pctText = currentTotalScore < 1 ? "<1%" : (currentTotalScore > 99 ? "99%+" : Math.round(currentTotalScore) + "%");
+    document.getElementById('chart-center-pct').textContent = pctText;
+
+    if (myRadarChart) {
+        myRadarChart.data.datasets[0].data = dataValues;
+        myRadarChart.update();
+    } else {
+        myRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Oval / Horizon', 'Magnetic (Kp)', 'Sky (Clear)'],
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: 'rgba(91, 192, 190, 0.3)', // #5bc0be
+                    borderColor: 'rgba(91, 192, 190, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fff'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        beginAtZero: true,
+                        ticks: { display: false, stepSize: 25 },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                        pointLabels: { color: '#8b949e', font: { size: 10 } }
+                    }
+                },
+                animation: { duration: 800 }
+            }
+        });
+    }
+}
+
+// モーダルを開く関数を拡張
+function openModal() { 
+    document.getElementById("detailModal").style.display = "flex"; 
+    // モーダルが表示されてからチャートを描画（サイズ計算のため）
+    setTimeout(updateRadarChart, 100);
 }
 
 // --- 6. 地図・UI・ヘルパー ---
@@ -1122,9 +1200,6 @@ function scheduleNextUpdate() {
         scheduleNextUpdate();
     }, intervalMs);
 }
-
-// ページ読み込み時に最初のタイマーをセット
-scheduleNextUpdate();
 
 // 最初のスケジュールを開始(初回実行のトリガー（ページ読み込み時など）)
 scheduleNextUpdate();
