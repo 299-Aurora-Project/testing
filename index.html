@@ -313,15 +313,19 @@ input:checked + .slider:before { transform: translateX(20px); }
 <body onkeydown="closeWelcome()" onclick="closeWelcome(); closeAllLists();">
 
 <div id="welcome-overlay" class="overlay hidden">
-
-<!--
-    <div class="arrow-container">
-        <div class="thin-arrow">↑</div>
-        <div class="thin-arrow">↑</div>
-        <div class="thin-arrow">↑</div>
+    <div class="arrow-container" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 5px;">
+        <div class="thin-arrow" style="color: #5bc0be; font-size: 1.5rem;">↑</div>
+        <div class="thin-arrow" style="color: #5bc0be; font-size: 1.5rem;">↑</div>
+        <div class="thin-arrow" style="color: #5bc0be; font-size: 1.5rem;">↑</div>
     </div>
---> 
+
+    <div class="welcome-box">
+        Please set a location first
+    </div>
+</div>
     
+
+<!-- 
     <div class="welcome-box" style="padding: 30px; min-width: 280px;">
         <img src="location.png" alt="Location Required" 
              style="width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">
@@ -331,6 +335,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         </div>
     </div>
 </div>
+-->
 
 <div id="home-screen" class="container">
     <div class="header-area">
@@ -495,7 +500,7 @@ input:checked + .slider:before { transform: translateX(20px); }
             </table>
             <p style="margin-top:10px; color: #ffab70; font-size: 0.8rem;">
                 * <strong>Cloud Impact:</strong> If cloud cover exceeds 70%, the score is significantly reduced. If it exceeds 85%, the result is forced to "Low".<br><br>
-                * <strong>Cloud overlay:</strong> <strong>Clounds</strong> will be added to the image when other conditions are favorable but thick cloud cover reduces aurora visability.
+                * <strong>Cloud overlay:</strong> <strong>Clouds</strong> will be added to the image when other conditions are favorable but thick cloud cover reduces aurora visability.
             </p>
         </div>
     </div>
