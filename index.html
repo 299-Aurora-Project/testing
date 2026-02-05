@@ -391,7 +391,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.14.2</span></h1>
+            <h1>Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.14.7</span></h1>
         </div>
         <div class="produced-by">Produced by Shin</div>
     </div>
@@ -632,7 +632,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 // --- 1. 定数とグローバル変数 ---
 const PUBLIC_KEY = 'BAp0wnGuvaoZk_Q7Bn4H4DWAR2Zdi9juZECl10m290Ff9sAJqiaXepWYvGgbI7WOb9K3O0MOTG8TVi_hg_ovfEg';
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwFskMCT7Owxi1BMG0AWCgI1nFCSJMJ4NjV6e5TfqckA7IDHaicDfJMr8w-kkCvfmUZTw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbweEzuAjP1A90O6-ynQK_-aU9xKgLv_NQMMeC69eWbO51ThLZmssweI8KPvIU0yiFmsxQ/exec";
 const CORS = GAS_URL + "?url="; // GASプロキシはやめて、安定したAllOriginsに戻します
 
 // 候補B (予備):
@@ -1103,7 +1103,7 @@ async function handleNotifToggleEvent() {
     }
 }
 
-// --- 5. データ取得・予報 ---
+// データ取得・予報
 async function updateAll() {
     if (myLat === null || myLon === null) return;
     
@@ -1387,28 +1387,44 @@ async function getCloud(isDaytime = false) {
     if (myLat === null || myLon === null) return;
 
     try {
-        // 1. まずデータを取ってくる (CORSプロキシ不要)
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${myLat}&longitude=${myLon}&current=cloudcover&hourly=cloudcover&timezone=auto`);
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${myLat}&longitude=${myLon}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&hourly=cloud_cover&timezone=auto`;
+        const res = await fetch(url);
         const data = await res.json();
         
-        if (!data || !data.hourly || !data.current) return; 
+        if (!data || !data.current) return; 
+        
+        // ここで取得した配列をグローバル変数に保存する
+        if (data.hourly && data.hourly.cloud_cover) {
+            cloudDataHourly = data.hourly.cloud_cover;
+        }
 
-        // 2. データを取得した「後」で変数を取り出す
-        cloudDataHourly = data.hourly.cloudcover;
-        const currentCloud = data.current.cloudcover;
-        const hourIndex = 21; // 現地時間の21時 (timezone=autoのおかげ)
-        const tonightCloud = cloudDataHourly[hourIndex] || currentCloud;
+        // 1. 今の雲量（各層の最大値）
+        const currentCloudMax = Math.max(
+            data.current.cloud_cover || 0,
+            data.current.cloud_cover_low || 0,
+            data.current.cloud_cover_mid || 0,
+            data.current.cloud_cover_high || 0
+        );
 
-        // 昼間なら今夜の予報(21時)、夜間なら今の雲量を採用
-        let val = isDaytime ? tonightCloud : currentCloud;
+        // 2. 21時の予報（配列があるかチェックしてから取得）
+        let tonightCloud = currentCloudMax; // デフォルトは今の値
+        if (data.hourly && data.hourly.cloud_cover) {
+            const hourIndex = 21; 
+            // 配列に21番目の要素があればそれを採用
+            if (data.hourly.cloud_cover[hourIndex] !== undefined) {
+                tonightCloud = data.hourly.cloud_cover[hourIndex];
+            }
+        }
+
+        // 昼間なら21時の予報、夜なら今の実況を採用
+        let val = isDaytime ? tonightCloud : currentCloudMax;
 
         const el = document.getElementById("cloud");
         if (el) {
-            // 表記のカスタマイズ
             let displayValue;
             if (val <= 5) {
                 displayValue = "Clear";
-            } else if (val >= 99) {
+            } else if (val >= 95) {
                 displayValue = "Overcast";
             } else {
                 displayValue = val + "%";
@@ -1416,7 +1432,6 @@ async function getCloud(isDaytime = false) {
 
             el.textContent = displayValue; 
             el.dataset.value = val;
-            // 雲が少ない(20以下)ほどオーロラが見やすいので 'high' (緑)
             el.className = `badge ${val <= 20 ? 'high' : (val <= 60 ? 'mid' : 'low')}`;
         }
     } catch (e) {
@@ -1455,8 +1470,8 @@ async function shortForecast() {
 
     // 0%と100%を避けるフォーマット関数
     const formatCloud = (val) => {
-        if (val <= 0) return "Clear";
-        if (val >= 100) return "Overcast";
+        if (val <= 5) return "Clear";
+        if (val >= 95) return "Overcast";
         return val + "%";
     };
 
@@ -1475,64 +1490,54 @@ let myRadarChart = null;
 
 //Overall Possibility判定ロジック
 function calculateTotal() {
-    // 1. 各要素の取得
     const kp = parseFloat(document.getElementById("kp").textContent) || 0;
     const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
     const icon = document.getElementById("status-icon");
 
-    // 2. 【最新：Radar Chart版ロジック】配分を最適化
-    // Oval(Max 45) + Magnetic(Max 40) + Sky(Max 15) = 100点満点
+    // 1. 各項目のスコア計算
     let ovalScore = Math.min(lastAuroraProb * 1.5, 45); 
     let magneticScore = Math.min(kp * 5, 40); 
     let skyScore = Math.max(0, 15 * (1 - cloud / 100));
-
-    let score = ovalScore + magneticScore + skyScore;
-
-    // 3. 【最重要】低緯度・遠距離フィルター
-    if (lastAuroraProb < 5) {
-        score *= 0.01;
+    
+    // 2. 倍率計算
+    let visibilityMultiplier = 1.0;
+    if (lastAuroraProb < 20) {
+        visibilityMultiplier = Math.max(0, (lastAuroraProb - 2) / (20 - 2));
     }
-
-    // 4. 【最新】厚い雲による強制抑制
-    // 雲量85%以上は肉眼視不可のため、スコアを20（Low確定）に封じ込める
-    let finalScore = score;
+    
+    // 3. 最終計算（倍率をかける）
+    let calculatedScore = (ovalScore + magneticScore + skyScore) * visibilityMultiplier;
+    
+    // 4. 雲量による強制抑制
+    let finalValue = calculatedScore;
     if (cloud > 85) {
-        finalScore = Math.min(score, 20);
+        finalValue = Math.min(calculatedScore, 20);
     }
-
-    // 数値をグローバル変数に保持
+    
+    // 5. GASと同期するために四捨五入
+    let finalScore = Math.round(finalValue);
     currentTotalScore = finalScore;
 
-    // 5. 表示テキストとバッジ色の決定 (判定基準: 50/35)
+    // --- 表示更新 ---
     const resEl = document.getElementById("result");
     if (resEl) {
         resEl.classList.remove("low", "mid", "high");
-        let statusText = "";
-        let statusClass = "";
-
-        if (finalScore >= 50) {
-            statusText = "High";
-            statusClass = "high";
-        } else if (finalScore >= 35) {
-            statusText = "Possible";
-            statusClass = "mid";
-        } else {
-            statusText = "Low";
-            statusClass = "low";
-        }
+        let statusText = (finalScore >= 50) ? "High" : (finalScore >= 35 ? "Possible" : "Low");
+        let statusClass = (finalScore >= 50) ? "high" : (finalScore >= 35 ? "mid" : "low");
         resEl.textContent = statusText;
         resEl.classList.add(statusClass);
     }
 
-    // 6. 画像の切り替え
+    // --- アイコン更新 ---
     if (icon) {
         if (finalScore >= 50) {
             icon.src = "high.png";
         } else if (finalScore >= 35) {
             icon.src = "possible.png";
         } else {
-            // Lowかつ「晴れていればチャンス(35以上)だった」場合は雲画像
-            if (score >= 35 && cloud >= 70) {
+            // ここで「倍率をかける前のポテンシャル」で雲画像判定をする
+            let potentialScore = ovalScore + magneticScore + skyScore;
+            if (potentialScore >= 35 && cloud >= 70) {
                 icon.src = "cloud.png";
             } else {
                 icon.src = "low.png";
@@ -1540,10 +1545,10 @@ function calculateTotal() {
         }
     }
 
-    // 7. パーセント表示の更新
+    // --- パーセント表示 ---
     const pctEl = document.getElementById("score-pct");
     if (pctEl) {
-        pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : Math.round(finalScore) + "%"));
+        pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : finalScore + "%"));
     }
 }
 
@@ -1942,14 +1947,14 @@ async function reverseGeocode(lat, lon) {
         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=en`);
         const data = await res.json();
         if (!data) return; // データがなければ処理を中断
-        // ★ 変数 'name' をここで定義
+        // 変数 'name' をここで定義
         const name = (data.address.city || data.address.town || "Unknown") + ", " + data.address.country;
         document.getElementById("loc").textContent = name;
         return name; // ★ 取得した名前を返り値として追加
     } catch (e) { 
         const fallback = lat.toFixed(2) + ", " + lon.toFixed(2);
         document.getElementById("loc").textContent = fallback;
-        return fallback; // ★ エラー時も座標を名前として返す
+        return fallback; // エラー時も座標を名前として返す
     }
 }
 
