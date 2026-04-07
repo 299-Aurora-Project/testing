@@ -124,7 +124,7 @@ button:disabled { opacity: 0.3; cursor: not-allowed; }
 
 /* 2. 入力窓：角丸を8pxに統一し、ネイビー系に */
 #cityInput {
-    width: 220px;           /* ここで横幅を固定*/
+    width: 220px;           /* 横幅を固定*/
     box-sizing: border-box;
     border-radius: 5px !important;     /* 他のボタンと統一 */
     border: 1px solid #3a506b;
@@ -356,6 +356,84 @@ input:checked + .slider:before { transform: translateX(20px); }
     transform: scale(0.98);
 }
 
+.advice-text {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #00ffff; /* シアン色。背景に合わせて調整してください */
+    font-style: italic;
+    min-height: 1.2em; /* 文字がない時も高さを確保してガタつきを防止 */
+    text-align: center;
+    opacity: 0.9;
+}
+
+/* 画面が暗い場合や警告の意味を強めたい場合は、少しオレンジ寄りにしても良いです */
+#observation-advice {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+}
+
+
+/* オーロラ凡例のスタイル */
+.oval-legend {
+    margin-top: 10px;
+    width: 100%;
+    display: none; /* 初期状態は非表示 */
+}
+
+.legend-bar {
+    height: 8px;
+    width: 100%;
+    border-radius: 4px;
+    /* getAuroraColorの配色に合わせたグラデーション */
+    background: linear-gradient(to right, 
+        #00ff7f 0%,   /* Low */
+        #00ff00 20%,  /* Normal */
+        #ccff00 40%,  /* Lime */
+        #ffd700 60%,  /* Gold */
+        #ff8c00 75%,  /* Orange */
+        #ff0000 90%,  /* Red */
+        #ff00ff 100%  /* Strong */
+    );
+    margin-bottom: 5px;
+}
+
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: #8b949e;
+}
+
+/* 共通のバッジスタイル：基本は白文字 */
+.badge {
+    color: #ffffff !important; /* 基本の文字色は白 */
+}
+
+
+/* Low（赤）, Mid（黄）, High（緑）の時は、badge自体の白文字が適用される */
+/* データがあるLow：グレー背景 + 白文字 */
+.badge.low {
+    background-color: #3a506b; 
+    color: #ffffff !important;
+}
+
+/* データがないStatus：グレー背景 + グレー文字 */
+.badge.status {
+    background-color: #3a506b;
+    color: #8b949e !important;
+}
+
+.badge.mid  { background-color: #ca8a04; }
+
+/* High：赤背景（最重要） */
+.badge.high {
+    background-color: #ff4d4d; /* ここを赤に設定 */
+    color: #ffffff !important;
+}
+
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -376,78 +454,86 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
     
 
-<!-- 
-    <div class="welcome-box" style="padding: 30px; min-width: 280px;">
-        <img src="location.png" alt="Location Required" 
-             style="width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">
-        
-        <div style="font-size: 1.1rem; font-weight: bold;">
-            ↑  Please set a location first  ↑
-        </div>
-    </div>
-</div>
--->
-
 <div id="home-screen" class="container">
     <div class="header-area">
         <div class="title-row">
-            <h1>Easy Aurora Forecast<span class="beta-suffix">(beta)</span> <span class="version">v. t1.14.7</span></h1>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+            <h1>Easy Aurora Forecast<span class="beta-suffix"></span> <span class="version">v. t4.6.0<span></h1>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         </div>
         <div class="produced-by">Produced by Shin</div>
     </div>
 
-    <div class="card" id="card-loc">
+    <div class="card" id="card-loc" style="height: auto !important; padding-bottom: 20px; box-sizing: border-box;">
         <div class="label-main" onclick="openDetail('location')">📍Location</div>
-        <div id="loc" class="value">Not Set</div>
+        <div id="loc" class="value" style="word-break: break-all; margin-bottom: 25px;">Not Set</div>
         
-        <br>
-        <button id="btn-gps" onclick="getLocation(); event.stopPropagation();">Get Current Location via GPS</button><br>
+            
+        <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 5px; box-sizing: border-box;">
 
-        <button id="btn-map-select" onclick="openMapForSelection()" 
-            style="display: block; clear: both; width: auto; min-width: 220px; margin: 10px 0; padding: 12px 20px; background: #5bc0be; color: #0b132b; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
-            <i class="fas fa-map-marked-alt"></i> Select from a Map
+            
+        <button id="btn-gps" onclick="getLocation(); event.stopPropagation();" 
+            style="width: calc(50% - 5px) !important; min-width: 0 !important; max-width: 50% !important; height: 50px; background: #3a506b; color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: normal; padding: 0 !important; flex: none !important;">
+            <span style="font-size: 1.5rem; margin-right: 5px;">🛰️</span>
+            <span style="font-size: 0.9rem;">GPS</span>
         </button>
-
-        Search City:
+        
+        <button id="btn-map-select" onclick="openMapForSelection()" 
+            style="width: calc(50% - 5px) !important; min-width: 0 !important; max-width: 50% !important; height: 50px; background: #3a506b; color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: normal; padding: 0 !important; flex: none !important;">
+            <span style="font-size: 1.5rem; margin-right: 5px;">🗺️</span>
+            <span style="font-size: 0.9rem;">MAP</span>
+        </button>
+        </div>
+    
+        <div style="text-align: left; font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; margin-top: 15px;">Search City:</div>
         <div class="search-container">
-            <input id="cityInput" 
-                   placeholder="e.g. Yellowknife, Canada" 
-                   oninput="handleCityInput(this)" 
-                   onfocus="handleCityInput(this)" 
-                   onclick="event.stopPropagation()">
+            <input id="cityInput" placeholder="e.g. Yellowknife, Canada" oninput="handleCityInput(this)" onfocus="handleCityInput(this)" onclick="event.stopPropagation()">
             <button id="btn-search" onclick="searchCity()">Set</button>
             <div id="autocomplete-list" class="autocomplete-items"></div>
         </div>
-        <div id="search-error" class="error-msg">City not found. Please check your input.</div>
-    </div>
 
-    
-        <div class="card" id="card-main-result">
+        
+        <div id="search-error" class="error-msg" style="min-height: 0; margin-top: 5px;">City not found. Please check your input.</div>
+    </div> 
+
+    <div class="card" id="card-main-result">
         <div id="total-label" class="label-main" onclick="openDetail('probability')">🌌Overall Probability</div>
         <div id="total-sub-label" class="label-sub-current">Current:</div>
 
-        <div id="possibility-area" style="text-align: center; margin: 15px 0; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-        
+        <div id="possibility-area" style="text-align: center; margin: 10px 0 0; display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <div style="position: relative; display: inline-block;">
-                <img id="status-icon" src="location.png" alt="Status" onclick="openModal()" 
-                     style="width: 180px; height: auto; cursor: pointer; display: block; -webkit-tap-highlight-color: transparent;">
-            
-                <div onclick="openImageModal(); event.stopPropagation();" 
-                     style="position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; 
-                            background: #3a506b; color: #5bc0be; border-radius: 50%; 
-                            display: flex; align-items: center; justify-content: center; 
-                            font-weight: bold; cursor: pointer; font-size: 0.8rem; border: 1px solid #3a506b;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10;">
-                    ?
-                </div>
+                <img id="status-icon" src="location.png" alt="Status" onclick="openModal()" style="width: 180px; height: auto; cursor: pointer; display: block;">
+                <div onclick="openImageModal(); event.stopPropagation();" style="position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; background: #3a506b; color: #5bc0be; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; font-size: 0.8rem; border: 1px solid #3a506b; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10;">?</div>
             </div>
-
-            <div id="result" class="badge badge-large low" onclick="openModal()" style="margin: 0 auto;">--</div>
-        
-            <div class="last-updated" id="time-update-all" style="margin-top: 5px;">Last Update: --:--:--</div>
+            <div id="result" class="badge badge-large status" onclick="openModal()" style="margin: 0 auto;">Status</div>
+            <div id="observation-advice" style="font-size: 0.85rem; color: #5bc0be; font-style: italic; min-height: 1.2em; max-width: 200px; line-height: 1.3;"></div>
+            <div class="last-updated" id="time-update-all" style="margin-top: 0px;">Last Update: --:--:--</div>
         </div>
 
-        <div class="switch-container" style="position: absolute; top: 15px; right: 22px; margin-top: 0; display: flex; flex-direction: column; align-items: flex-end;">
+        <div class="switch-container" style="position: absolute; top: 15px; right: 22px; display: flex; flex-direction: column; align-items: flex-end;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span class="switch-label">🔔</span>
                 <label class="switch">
@@ -455,25 +541,15 @@ input:checked + .slider:before { transform: translateX(20px); }
                     <span class="slider"></span>
                 </label>
             </div>
-            <div id="target-area-display" style="font-size: 0.65rem; color: #5bc0be; margin-top: 5px; text-align: right; line-height: 1.2; display: none;">
-                Target area:<br>
-                <span id="target-area-name" style="color: #8b949e;"></span>
-            </div>
+            <div id="target-area-display" style="font-size: 0.65rem; color: #5bc0be; margin-top: 5px; text-align: right; line-height: 1.2; display: none;">Target area:<br><span id="target-area-name" style="color: #8b949e;"></span></div>
         </div>
-    
-        <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
-            <button id="btn-update-all" 
-                    style="width: auto; min-width: 100px; white-space: nowrap; font-size: 0.85em; background: #3a506b; padding: 8px 12px;" 
-                    onclick="updateAll(); event.stopPropagation();">
-                Update Data
-            </button>
+
+        <div style="margin-top: 5px; display: flex; justify-content: flex-end;">
+            <button id="btn-update-all" style="width: auto; min-width: 100px; white-space: nowrap; font-size: 0.85em; background: #3a506b; padding: 8px 12px;" onclick="updateAll(); event.stopPropagation();">Update Data</button>
         </div>
     </div>
-    
-    <div id="time-update-all" class="last-updated" style="margin-top: 10px;"></div>
-</div>
 
-    <button id="toggle-data-btn" class="toggle-btn" onclick="toggleData(); event.stopPropagation();">Show All Information</button>
+    <button id="toggle-data-btn" class="toggle-btn" style="margin: 20px auto; display: block;" onclick="toggleData(); event.stopPropagation();">Show All Information</button>
 
     <div id="hidden-data">
         <div class="card" id="card-oval">
@@ -486,20 +562,22 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div class="card" id="card-kp-group">
             <div class="label-main" onclick="openDetail('kp')">☀Kp Index</div>
             <div class="label-sub-current">Current:</div>
-            
-
-            <div id="kp" class="badge low">--</div>
+            <div class="kp-wrapper" style="position: relative; display: inline-block;">
+                <div id="kp" class="badge low">--</div>
+                <div id="g-scale-indicator" onclick="showKpInfo(event)" style="display: none; position: absolute; top: -8px; right: -8px; background: #ff4d4d; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; line-height: 18px; text-align: center; font-weight: bold; border: 1.5px solid #1a1a1a; cursor: pointer; z-index: 10;">①</div>
+            </div>
             <div class="sub-section" id="card-kp3">
                 <div style="font-size: 0.8rem; color: #8b949e; margin-bottom: 5px;">Short Forecast:</div>
-
                 <div id="kp-short" class="value" style="font-size: 0.85rem; color: #5bc0be;">Ref 3-day forecast (NOAA)</div>
-<!--        テーブル
-                <pre id="kpForecast" style="margin-top:10px;">--</pre>
--->   
+            
             </div>
             <div class="chart-container" style="position: relative; height:200px; width:100%">
                 <canvas id="kpLineChart"></canvas>
             </div>
+            
+<!--テーブル-->   
+                <pre id="kpForecast" style="margin-top:10px;">--</pre>            
+            
         </div>
 
         <div class="card" id="card-cloud-group">
@@ -521,8 +599,8 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div style="border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-bottom: 15px; background: #0b132b;">
             <strong style="color: #5bc0be;">Thresholds:</strong>
             <ul style="margin: 5px 0; padding-left: 20px; font-size: 0.85rem;">
-                <li><span style="color: #dc2626;">High</span>: 70% or more</li>
-                <li><span style="color: #ca8a04;">Possible</span>: 35% to 69%</li>
+                <li><span style="color: #dc2626;">High</span>: 50% or more</li>
+                <li><span style="color: #ca8a04;">Possible</span>: 35% to 49%</li>
                 <li><span style="color: #8b949e;">Low</span>: Under 35%</li>
             </ul>
         </div>
@@ -567,46 +645,94 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div id="imageModal" class="modal-overlay" onclick="closeImageModal()">
-    <div class="modal-content">
-        <h2 style="color: #5bc0be; margin-top: 0; font-size: 1.3rem; text-align: center;">About the mascot</h2>
+    <div class="modal-content"> 
+        <h2 style="color: #5bc0be; margin-top: 0; font-size: 1.3rem; text-align: center;">What Each Icon Represents</h2>
         
-        <div style="margin: 15px 0; text-align: center;">
-            <img src="aurōra.png" alt="Guide Image" 
-                 style="max-width: 70%; height: auto; display: inline-block;">
+        <div style="font-size: 0.9rem; color: #eaeaea; line-height: 1.6; text-align: left; margin-bottom: 20px;">
+            The meanings of each icon for the Overall Possibility:
         </div>
 
-        <div style="font-size: 0.9rem; color: #eaeaea; line-height: 1.6; text-align: left; margin-bottom: 10px;">
-            Auroras are named after <strong>Aurōra</strong>, the Roman goddess. She symbolizes the arrival of the light of intelligence and creativity, and is identified with Eos in Greek mythology. She is also known as a goddess of many romances, and numerous myths tell stories of her love affairs.
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-bottom: 20px;">
+            
+            <div style="flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="high.png" style="width: 90px; height: 90px; object-fit: contain;">
+                    <span style="color: #eaeaea; font-size: 0.85rem;">High Chance</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="possible.png" style="width: 90px; height: 90px; object-fit: contain;">
+                    <span style="color: #eaeaea; font-size: 0.85rem;">Possible</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="low.png" style="width: 90px; height: 90px; object-fit: contain;">
+                    <span style="color: #eaeaea; font-size: 0.85rem;">Low Chance</span>
+                </div>
+            </div>
+
+            <div style="flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="fog.png" style="width: 90px; height: 90px; object-fit: contain;">
+                    <span style="color: #eaeaea; font-size: 0.85rem;">Foggy Sky</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="bright.png" style="width: 90px; height: 90px; object-fit: contain;">
+                    <span style="color: #eaeaea; font-size: 0.85rem;">Too Bright City Lights</span>
+                </div>
+            </div>
         </div>
 
-        <div class="tap-to-close">Tap to close</div>
+        <div style="font-size: 0.85rem; color: #eaeaea; line-height: 1.4; pt: 15px; margin-bottom: 20px; padding-top: 15px;">
+            * <strong>Cloud overlay:</strong> <strong>Clouds</strong> appear on icons when activity is high but visibility is blocked by thick cloud cover.
+        </div>
+
+        <h2 style="color: #5bc0be; margin-top: 20px; font-size: 1.3rem; text-align: center;">About the mascot</h2>
+        <div style="margin: 10px 0; text-align: center;">
+            <img src="aurōra.png" alt="Guide Image" style="max-width: 60%; height: auto; display: inline-block;">
+        </div>
+        <div style="font-size: 0.85rem; color: #eaeaea; line-height: 1.5; text-align: left;">
+            Auroras are named after <strong>Aurōra</strong>, the Roman goddess of dawn. She symbolizes the arrival of light and creativity.
+        </div>
+
+        <div class="tap-to-close" style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: #5bc0be; cursor: pointer;">
+            Tap to close
+        </div>
     </div>
 </div>
 
 
 
-<div id="map-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh;">
-    <div id="oval-toggle-wrapper" style="position: absolute; bottom: 30px; right: 12px; z-index: 10001; background: rgba(11, 19, 43, 0.9); padding: 8px 12px; border-radius: 8px; border: 1px solid #3a506b; display: none; align-items: center; pointer-events: auto;">
-        <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px; margin-right: 8px;">
-            <input type="checkbox" id="oval-visibility-toggle" checked onchange="toggleOvalLayer()" style="opacity: 0; width: 0; height: 0;">
-            <span class="slider round"></span>
-        </label>
-        <span style="color: white; font-size: 0.75rem; font-weight: bold; font-family: sans-serif;">Aurora Oval</span>
+<div id="map-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index: 10000;">
+    <button id="back-btn" onclick="hideMapScreen()">← Back</button>
+    
+    <div id="map" style="height: 100%; width: 100%;"></div>
+
+    <div style="position: absolute; top: 10px; right: 10px; z-index: 10001; background: rgba(11, 19, 43, 0.9); padding: 12px; border-radius: 12px; border: 1px solid #3a506b; width: 140px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px; gap: 10px;"> <span style="font-size: 0.8rem; color: #5bc0be; font-weight: bold;">Aurora Oval</span>
+        
+            <div id="oval-toggle-wrapper" style="display: flex; align-items: center;"> 
+                <label class="switch">
+                    <input type="checkbox" id="oval-visibility-toggle" checked onchange="toggleOvalLayer()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+     
+     
+        <div id="oval-legend-container">
+            <div class="legend-bar" style="height: 6px; width: 100%; border-radius: 3px; background: linear-gradient(to right, #00ff7f, #00ff00, #ccff00, #ffd700, #ff8c00, #ff0000, #ff00ff); margin-bottom: 4px;"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #8b949e;">
+                <span>Low</span>
+                <span>High</span>
+            </div>
+        </div>
     </div>
+</div>
 
 
-    <button class="btn" id="back-btn" onclick="hideMapScreen();" 
-        style="position: absolute; top: 80px; left: 12px; z-index: 10001; ...">
-        ← Back
-    </button>
-    
-    
-    
-    
-    
-    
 
-    <div id="map" style="height: 100vh; width: 100%;"></div>
+
+
+    <div id="map" style="height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: -1;"></div>
 
     <div id="map-control-panel" style="position: absolute; bottom: 30px; right: 20px; z-index: 10001; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none;">
         <div id="map-location-name" style="background: rgba(11, 19, 43, 0.9); color: #5bc0be; padding: 5px 12px; border-radius: 5px; font-size: 0.85rem; margin-bottom: 8px; border: 1px solid #3a506b; display: none; pointer-events: auto; font-family: sans-serif;">
@@ -618,6 +744,9 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 </div>
 
+
+
+
 <div id="detail-modal-overlay" class="modal-overlay" onclick="closeDetailModal()">
     <div class="modal-content">
         <h2 id="detail-title" style="color: #5bc0be; margin-top: 0; font-size: 1.3rem;"></h2>
@@ -627,12 +756,24 @@ input:checked + .slider:before { transform: translateX(20px); }
     </div>
 </div>
 
+
+
+<div id="kp-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;" onclick="closeKpInfo()">
+    <div style="background: #1a1a1a; padding: 20px; border-radius: 12px; width: 80%; max-width: 300px; border: 1px solid #30363d; position: relative;" onclick="event.stopPropagation()">
+        <div id="g-scale-detail" style="color: #c9d1d9; font-size: 0.9rem; line-height: 1.6;">
+            </div>
+        <button onclick="closeKpInfo()" style="margin-top: 15px; width: 100%; padding: 8px; border-radius: 6px; border: none; background: #238636; color: white;">Close</button>
+    </div>
+</div>
+
+
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // --- 1. 定数とグローバル変数 ---
 const PUBLIC_KEY = 'BAp0wnGuvaoZk_Q7Bn4H4DWAR2Zdi9juZECl10m290Ff9sAJqiaXepWYvGgbI7WOb9K3O0MOTG8TVi_hg_ovfEg';
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbweEzuAjP1A90O6-ynQK_-aU9xKgLv_NQMMeC69eWbO51ThLZmssweI8KPvIU0yiFmsxQ/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwdqhklON6c7jlGJnM00EEaFswnCn_t9q-jy6Fw0Bm_Yt_6fQ87s51AsZkztMgSZM7O/exec";
 const CORS = GAS_URL + "?url="; // GASプロキシはやめて、安定したAllOriginsに戻します
 
 // 候補B (予備):
@@ -649,6 +790,8 @@ let cachedAuroraData = null, map = null, auroraLayer = null, userMarker = null, 
 let searchTimer = null, lastScrollPos = 0;
 
 let savedScrollY = 0; // スクロール位置を覚える
+
+let lastUpdateTimestamp = 0; // 最後に updateAll が完了した時刻 (ms)
 
 // --- 2. 初期化処理 (DOMContentLoaded) ---
 document.addEventListener('DOMContentLoaded', async () => {
@@ -899,6 +1042,12 @@ async function setLocation(lat, lon, name) {
     myLat = newLat; 
     myLon = newLon;
     
+    // --- 【重要】地図クリック時に一時保存した環境データをグローバルに反映 ---
+    if (typeof tempLocation !== 'undefined' && tempLocation) {
+        window.myBortle = tempLocation.bortle;
+        window.myVisibility = tempLocation.visibility;
+    }
+    
     // 2. UI表示を更新
     document.getElementById("loc").textContent = name;
     
@@ -909,14 +1058,14 @@ async function setLocation(lat, lon, name) {
     
     // 4. 地図のピンを新しい場所に移動
     if (map) {
-        // ★修正：引数として新しい座標を直接渡す
+        // 引数として新しい座標を直接渡す
         updateMapMarker(newLat, newLon);
         map.setView([lat, lon], map.getZoom()); // 検索した場所に地図を飛ばす
     }
     
     // 5. 最新の座標に基づいて計算（Overall Possibilityなど）
     // await を外し、エラーが起きても次に進めるようにする
-    // これにより、updateAll が重くても途中で止まっても、関数自体は完了し、UIのフリーズを防げます。
+    // updateAll が重くても途中で止まっても、関数自体は完了し、UIのフリーズを防げます。
     updateAll().catch(err => console.error("UpdateAll failed in background:", err));
 }
 
@@ -933,7 +1082,7 @@ async function getLocation() {
         // 2. 「爆速版 setLocation」を即座に実行！
         // これにより、住所検索を待たずに地図とピンが新しい場所に飛びます。
         // とりあえず地名は "Loading address..." などにしておきます。
-        await setLocation(lat, lon, "Locating...");
+        await setLocation(lat, lon, "⌛Locating...");
 
         // 3. その後、バックグラウンドで住所を調べて表示を上書き
         try {
@@ -944,9 +1093,6 @@ async function getLocation() {
         } catch (e) {
             console.error("Address lookup failed:", e);
         }
-
-        // ※ updateAll は setLocation の中で（非同期で）呼ばれるようになったので、
-        // ここで改めて呼ぶ必要はありません（二重実行を防げます）。
         
     }, err => {
         console.error(err);
@@ -1103,10 +1249,13 @@ async function handleNotifToggleEvent() {
     }
 }
 
-// データ取得・予報
+
+/////////////////////////////////////
+// メイン関数(データ取得・予報)    //
+/////////////////////////////////////
 async function updateAll() {
-    if (myLat === null || myLon === null) return;
     
+    const btn = document.getElementById("btn-update-all");
     const statusIcon = document.getElementById("status-icon");
     const resultBadge = document.getElementById("result");
 
@@ -1114,34 +1263,32 @@ async function updateAll() {
     if (myLat === null || myLon === null) {
         if (statusIcon) statusIcon.src = "location.png"; // 未設定用画像を表示
         if (resultBadge) {
-            resultBadge.textContent = "---";
-            resultBadge.className = "badge badge-large low"; // グレー系のスタイルがあればそれに変更
+            resultBadge.textContent = "Status";
+            resultBadge.className = "badge badge-large status"; // グレー系のスタイルに変更
         }
         return;
     }
     
-    const btn = document.getElementById('btn-update-all');
     if(btn) btn.classList.add('loading-btn');
-    ['kp','oval','cloud','result'].forEach(id => setItemLoading(id, true));
-    
-    // 画像とバッジを Loading 状態にする
-    if (statusIcon) statusIcon.src = "loading.gif"; // Loading画像を表示
+    if (statusIcon) statusIcon.src = "loading.gif";
 
+    // 各項目をLoading表示にする
+    ['kp','oval','cloud','result'].forEach(id => setItemLoading(id, true));
+
+    // 1. 時刻判定
     try {
-        // 1. 時刻判定
         const now = new Date();
         const hour = now.getHours();
         
-        // 3:00 〜 21:00 は昼間と判定
+        // 昼間を判定(3:00 〜 21:00)
         const isDaytime = (hour >= 3 && hour < 21);
-        const subLabelEl = document.getElementById("total-sub-label");
         
+        const subLabelEl = document.getElementById("total-sub-label");
         if (subLabelEl) {
             subLabelEl.textContent = isDaytime ? "Tonight (21:00): " : "Current: ";
         }
 
         // 2. データ取得 (getCloud に isDaytime を渡す)
-        // 429エラーが出る場合は、ここを Promise.all ではなく一つずつ await するのも手です
         await Promise.all([
             getKp(), 
             fetchKp3DayForecast(), 
@@ -1150,46 +1297,80 @@ async function updateAll() {
         ]);
         
         await shortForecast();
-
-        // 3. 確率計算
-        // ここで calculateTotal にフラグを渡し、計算ロジックを昼夜で切り替えさせます
+        
+        // 3. 確率計算(calculateTotalにフラグを渡し計算ロジックを昼夜で切り替え)
         calculateTotal(isDaytime); 
-
+        
         updateTimestamp('time-update-all');
+
     } catch (e) {
         console.error("Update All Error:", e);
     } finally {
+        // 1. ボタンのLoading表示を止める
         if(btn) btn.classList.remove('loading-btn');
+        
+        // 2. 各項目の Loading 状態を解除（false）
+        ['kp', 'oval', 'cloud', 'result'].forEach(id => setItemLoading(id, false));
     }
+
+//    // --- 🧪 デバッグ用：バッジを強制表示 ---
+//    const indicator = document.getElementById("g-scale-indicator");
+//    if (indicator) {
+//        indicator.style.display = "block";
+//        indicator.textContent = "①";
+//        indicator.dataset.level = 1; 
+//        console.log("【テスト】バッジを強制表示しました。");
+//    }
+
+    // 現在の時刻を記録する処理
+    lastUpdateTimestamp = Date.now();
 }
+
+
 
 async function getKp() {
     try {
         const targetUrl = KP_URL + "?t=" + Date.now();
         const res = await fetch(CORS + encodeURIComponent(targetUrl));
-        
-        // GASプロキシの場合、ここですでにNOAAの純粋なデータ（配列）が返ってきます
         const data = await res.json(); 
-        
-        // データの存在チェック（GASがエラーを返した場合などの対策）
-        if (!data || !Array.isArray(data)) {
-            console.error("Invalid Kp data received from Proxy");
-            return 0;
-        }
 
-        // 最新のKp値を取り出す (配列の最後)
-        const val = parseFloat(data[data.length - 1][1]);
-        const el = document.getElementById("kp");
-        if (el) {
-            el.textContent = val.toFixed(1);
-            el.className = `badge ${val >= 5 ? 'high' : (val >= 3 ? 'mid' : 'low')}`;
+        if (!data || !Array.isArray(data)) return 0;
+
+        let val = 0;
+        for (let i = data.length - 1; i >= 0; i--) {
+            const entry = data[i];
+            const tempVal = parseFloat(Array.isArray(entry) ? entry[1] : entry);
+            
+            if (!isNaN(tempVal)) {
+                val = tempVal;
+                
+                // 実測値が変わったとき、バッジ（Gスケール）を更新
+                updateGScaleIndicator(val);
+            
+                break; 
+            }
         }
+        
         return val;
+
     } catch (e) {
         console.error("Kp Fetch Error:", e);
         return 0;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function checkOval() {
     try {
@@ -1228,69 +1409,178 @@ async function checkOval() {
 
 let myLineChart = null; // グラフを保持する変数
 
+
+
+
+
+
+
+
+
+
 async function fetchKp3DayForecast() {
     try {
         const res = await fetch(CORS + encodeURIComponent(FORECAST_URL));
-        const text = await res.text(); 
-        
-        // 1. テキストからデータの行を抽出
-        // NOAAのフォーマットから 00-03UT などの時間帯とKp値を抜き出す
-        const lines = text.split('\n');
+        let text = await res.text();
+
+        // =========================
+        // ✅ 入力の正規化（どんな形式でもOK）
+        // =========================
+        try {
+            text = JSON.parse(text);
+        } catch {
+            text = text.replace(/^"|"$/g, '');
+            text = text.replace(/\\n/g, '\n');
+        }
+
+        const lines = text.split('\n').map(l => l.trim());
+
+        // =========================
+        // ✅ 日付取得（確実）
+        // =========================
         let dates = [];
-        let dataPoints = []; // { label: "日付 時間", value: Kp値 }
+        for (let line of lines) {
+            if (line.includes("NOAA Kp index breakdown")) continue;
 
-        // 1.テキスト内の "00-03UT" といったパターンの行を探して数値を抽出 (例: "            Jan 31      Feb 01      Feb 02")
-        lines.forEach(line => {
-            const dateMatch = line.match(/([A-Z][a-z]{2}\s+\d{2})/g);
-            if (dateMatch && dateMatch.length >= 3) {
-                dates = dateMatch; // 3日分の日付を取得
+            const match = line.match(/([A-Z][a-z]{2}\s+\d{2})/g);
+            if (match && match.length >= 3) {
+                dates = match;
+                break;
             }
-        });
+        }
 
-        // 2. Kp値の行を処理 (例: "00-03UT      2.33        3.00        1.67")
-        lines.forEach(line => {
-            const timeMatch = line.match(/(\d{2}-\d{2})UT\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
-            if (timeMatch && dates.length >= 3) {
-                // 3日分のデータが含まれるので、簡易的に時間ラベルと値を収集
-                // 実際には日付も考慮するとより正確ですが、まずは時間帯で並べます
-                const hourRange = timeMatch[1]; // "00-03"
-                
-                // 3日分それぞれのデータをラベル付きで保存
-                for (let i = 0; i < 3; i++) {
-                    dataPoints.push({
-                        label: `${dates[i]} ${hourRange}`, // "Jan 31 00-03"
-                        value: parseFloat(timeMatch[i + 2]),
-                        dayIndex: i // 並び替え用
-                    });
-                }
+        if (dates.length < 3) {
+            console.error("❌ 日付取得失敗");
+            return;
+        }
+
+        // =========================
+        // ✅ Kpデータだけ抽出（超厳格）
+        // =========================
+        const validHours = [
+            "00-03","03-06","06-09","09-12",
+            "12-15","15-18","18-21","21-00"
+        ];
+
+        let dataPoints = [];
+
+        for (let line of lines) {
+            const match = line.match(/^(\d{2}-\d{2})UT\s+(.+)/);
+            if (!match) continue;
+
+            const hour = match[1];
+            if (!validHours.includes(hour)) continue;
+
+            const nums = match[2].trim().split(/\s+/);
+
+            if (nums.length < 3) continue; // 不完全データは捨てる
+
+            for (let i = 0; i < 3; i++) {
+                const val = parseFloat(nums[i]);
+
+                dataPoints.push({
+                    dateStr: dates[i],
+                    timeStr: hour,
+                    value: (val >= 0 && val <= 9) ? val : null,
+                    dayIndex: i,
+                    hourStart: parseInt(hour.split('-')[0])
+                });
             }
-        });
+        }
 
-        // 3. 時系列順に並び替え（1日目、2日目、3日目の順）
+        // =========================
+        // ❌ データ不足なら描画しない（崩れ防止）
+        // =========================
+        if (dataPoints.length < 24) {
+            console.error("❌ データ不足 → 描画スキップ");
+            return;
+        }
+
+        // =========================
+        // ✅ ソート
+        // =========================
         dataPoints.sort((a, b) => {
-            // 日付インデックスで比較し、同じ日なら時間帯で比較
             if (a.dayIndex !== b.dayIndex) return a.dayIndex - b.dayIndex;
-            return a.label.localeCompare(b.label);
+            return a.hourStart - b.hourStart;
         });
 
-        const labels = dataPoints.map(p => p.label);
+        // =========================
+        // ✅ 現在値
+        // =========================
+        const now = new Date();
+        const h = now.getUTCHours();
+        const d = now.getUTCDate();
+
+        let currentVal = null;
+
+        const target = dataPoints.find(p => {
+            const day = parseInt(p.dateStr.match(/\d+/)[0]);
+            return day === d && h >= p.hourStart && h < p.hourStart + 3;
+        });
+
+        if (target) currentVal = target.value;
+        else currentVal = dataPoints[dataPoints.length - 1].value;
+
+        // =========================
+        // ✅ 表示
+        // =========================
+        const el = document.getElementById("kp");
+        if (el && currentVal !== null) {
+            el.textContent = currentVal.toFixed(1);
+        }
+
+        // =========================
+        // ✅ グラフ（絶対崩れない）
+        // =========================
         const values = dataPoints.map(p => p.value);
 
-        // 2. グラフの描画呼び出し
-        if (labels.length > 0) {
-            drawKpChart(labels, values);
+        let last = "";
+        const labels = dataPoints.map((p, i) => {
+            if (i === 0 || p.dateStr !== last) {
+                last = p.dateStr;
+                return p.dateStr + " " + p.timeStr;
+            }
+            return "";
+        });
+
+        drawKpChart(labels, values);
+
+        // =========================
+        // ✅ テキスト
+        // =========================
+        const elF = document.getElementById("kpForecast");
+        if (elF) {
+            const m = text.match(/NOAA Kp index breakdown[\s\S]*?(?=\n[A-Z]|$)/i);
+            elF.innerText = m ? m[0] : "";
         }
-        
-        // 従来のテキスト表示（念のため残す）
-        const match = text.match(/NOAA Kp index breakdown[\s\S]*?(?=\n[A-Z]|$)/i);
-        const el = document.getElementById("kpForecast");
-        if (el) el.innerText = match ? match[0].trim() : "Updating...";
-        
+
+        console.log("✅ 安定描画成功");
 
     } catch (e) {
         console.error("Forecast Error:", e);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1387,13 +1677,13 @@ async function getCloud(isDaytime = false) {
     if (myLat === null || myLon === null) return;
 
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${myLat}&longitude=${myLon}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&hourly=cloud_cover&timezone=auto`;
+        // &forecast_days=1 を追加して、確実に「今日」のデータを取得するようにします
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${myLat}&longitude=${myLon}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&hourly=cloud_cover&timezone=auto&forecast_days=1`;
         const res = await fetch(url);
         const data = await res.json();
         
         if (!data || !data.current) return; 
         
-        // ここで取得した配列をグローバル変数に保存する
         if (data.hourly && data.hourly.cloud_cover) {
             cloudDataHourly = data.hourly.cloud_cover;
         }
@@ -1406,22 +1696,29 @@ async function getCloud(isDaytime = false) {
             data.current.cloud_cover_high || 0
         );
 
-        // 2. 21時の予報（配列があるかチェックしてから取得）
-        let tonightCloud = currentCloudMax; // デフォルトは今の値
-        if (data.hourly && data.hourly.cloud_cover) {
-            const hourIndex = 21; 
-            // 配列に21番目の要素があればそれを採用
-            if (data.hourly.cloud_cover[hourIndex] !== undefined) {
-                tonightCloud = data.hourly.cloud_cover[hourIndex];
+        // 2. 「今日の夜21時」の予報を正確に取得
+        let tonightCloud = currentCloudMax; 
+        if (data.hourly && data.hourly.time && data.hourly.cloud_cover) {
+            // time配列の中から、今日の21:00（T21:00）が含まれるインデックスを探す
+            const targetTimeStr = "T21:00"; 
+            const index21 = data.hourly.time.findIndex(t => t.includes(targetTimeStr));
+
+            if (index21 !== -1 && data.hourly.cloud_cover[index21] !== undefined) {
+                tonightCloud = data.hourly.cloud_cover[index21];
+                console.log(`Found 21:00 forecast: ${tonightCloud}% at index ${index21}`);
+            } else {
+                // 万が一見つからない場合は、予報配列の最後の方（夜）を参照
+                tonightCloud = data.hourly.cloud_cover[21] || currentCloudMax;
             }
         }
 
-        // 昼間なら21時の予報、夜なら今の実況を採用
+        // 判定ロジック：昼間なら21時の予報、夜なら今の実況を採用
         let val = isDaytime ? tonightCloud : currentCloudMax;
 
         const el = document.getElementById("cloud");
         if (el) {
             let displayValue;
+            // 修正：数値が 0 でも "Clear" と表示するように調整
             if (val <= 5) {
                 displayValue = "Clear";
             } else if (val >= 95) {
@@ -1433,6 +1730,9 @@ async function getCloud(isDaytime = false) {
             el.textContent = displayValue; 
             el.dataset.value = val;
             el.className = `badge ${val <= 20 ? 'high' : (val <= 60 ? 'mid' : 'low')}`;
+            
+            // デバッグログ：どちらを採用したか確認
+            console.log(`Adopted value: ${val}% (${isDaytime ? 'Night Forecast' : 'Current'})`);
         }
     } catch (e) {
         console.error("Cloud Fetch Error:", e);
@@ -1488,11 +1788,12 @@ async function shortForecast() {
 let myRadarChart = null;
 
 
-//Overall Possibility判定ロジック
+// Overall Possibility判定ロジック
 function calculateTotal() {
     const kp = parseFloat(document.getElementById("kp").textContent) || 0;
     const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
     const icon = document.getElementById("status-icon");
+    const resEl = document.getElementById("result");
 
     // 1. 各項目のスコア計算
     let ovalScore = Math.min(lastAuroraProb * 1.5, 45); 
@@ -1508,36 +1809,76 @@ function calculateTotal() {
     // 3. 最終計算（倍率をかける）
     let calculatedScore = (ovalScore + magneticScore + skyScore) * visibilityMultiplier;
     
+    // ---------------------------------------------------------
+    // 【修正】Bortle 4以上（市街地）かつ Kp不足の場合のみ減衰させる
+    // ---------------------------------------------------------
+    const bortle = window.myBortle || 5;
+    let minKpRequired = 0;
+    if (bortle >= 7) minKpRequired = 4.5;
+    else if (bortle >= 4) minKpRequired = 2.0;
+
+    // 修正ポイント：bortleが4未満（海上など）なら、この減衰は無視される
+    if (bortle >= 4 && kp < minKpRequired) {
+        calculatedScore = calculatedScore * 0.1;
+    }
+
+    const vis = window.myVisibility || 10000; 
+    if (vis < 1000) {
+        calculatedScore = calculatedScore * 0.1;
+    } else if (vis < 3000) {
+        calculatedScore = calculatedScore * 0.5;
+    }
+    // ---------------------------------------------------------
+    
     // 4. 雲量による強制抑制
     let finalValue = calculatedScore;
     if (cloud > 85) {
         finalValue = Math.min(calculatedScore, 20);
     }
     
-    // 5. GASと同期するために四捨五入
+    // 5. 最終スコア確定
     let finalScore = Math.round(finalValue);
     currentTotalScore = finalScore;
 
-    // --- 表示更新 ---
-    const resEl = document.getElementById("result");
+    // --- 表示更新 (Status/High/Possible/Low) ---
     if (resEl) {
-        resEl.classList.remove("low", "mid", "high");
-        let statusText = (finalScore >= 50) ? "High" : (finalScore >= 35 ? "Possible" : "Low");
-        let statusClass = (finalScore >= 50) ? "high" : (finalScore >= 35 ? "mid" : "low");
+        resEl.classList.remove("low", "mid", "high", "status");
+        let statusText = "";
+        let statusClass = "";
+
+        if (myLat === null || myLon === null) {
+            statusText = "Status";
+            statusClass = "status"; 
+        } else if (finalScore >= 50) {
+            statusText = "High";
+            statusClass = "high"; 
+        } else if (finalScore >= 35) {
+            statusText = "Possible";
+            statusClass = "mid";
+        } else {
+            statusText = "Low";
+            statusClass = "low";
+        }
         resEl.textContent = statusText;
         resEl.classList.add(statusClass);
     }
-
-    // --- アイコン更新 ---
+    
+    // --- アイコン更新 (Bortle条件をここにも反映) ---
     if (icon) {
         if (finalScore >= 50) {
             icon.src = "high.png";
         } else if (finalScore >= 35) {
             icon.src = "possible.png";
         } else {
-            // ここで「倍率をかける前のポテンシャル」で雲画像判定をする
-            let potentialScore = ovalScore + magneticScore + skyScore;
-            if (potentialScore >= 35 && cloud >= 70) {
+            let potentialScore = (ovalScore + magneticScore + skyScore) * visibilityMultiplier;
+            
+            if (vis < 2000) {
+                icon.src = "fog.png";
+            } 
+            // 修正ポイント：Bortle 4以上かつ活動不足のときだけ bright.png にする
+            else if (lastAuroraProb >= 5 && bortle >= 4 && kp < minKpRequired) {
+                icon.src = "bright.png"; 
+            } else if (cloud > 70 && potentialScore >= 35) {
                 icon.src = "cloud.png";
             } else {
                 icon.src = "low.png";
@@ -1550,31 +1891,12 @@ function calculateTotal() {
     if (pctEl) {
         pctEl.textContent = (finalScore < 1 ? "< 1%" : (finalScore > 99 ? "> 99%" : finalScore + "%"));
     }
+
+    // --- アドバイス表示 (メッセージ不要のため削除) ---
+    const adviceEl = document.getElementById("observation-advice");
+    if (adviceEl) adviceEl.textContent = ""; 
 }
 
-    const resEl = document.getElementById("result");
-    const targetScore = currentTotalScore; // ここで currentTotalScore を使う
-
-    resEl.classList.remove("low", "mid", "high");
-
-    let statusText = "";
-    let statusClass = "";
-
-    // 'score' ではなく 'targetScore' (中身はcurrentTotalScore) で判定
-    if (targetScore >= 50) {
-        statusText = "High";
-        statusClass = "high";
-    } else if (targetScore >= 35) {
-        statusText = "Possible";
-        statusClass = "mid";
-    } else {
-        statusText = "Low";
-        statusClass = "low";
-    }
-
-    resEl.textContent = statusText;
-    resEl.classList.add(statusClass);
-    
 
 // レーダーチャートを更新する関数
 function updateRadarChart() {
@@ -1582,12 +1904,38 @@ function updateRadarChart() {
     const kp = parseFloat(document.getElementById("kp").textContent) || 0;
     const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
 
-    // 3軸のデータを 0-100 に正規化
+// --- 総合確率から「場所の条件」だけを逆算して取り出す ---
+    // 総合確率は [場所スコア × 雲の影響 × Kpの影響] で算出されているはずです。
+    // そのため、雲(cloud)とKpの影響を排除して、純粋な「オーバルの位置関係」を計算します。
+    
+    let rawProb = lastAuroraProb || 0;
+    
+    // 雲の影響を打ち消す (例: 雲80%なら確率は0.2倍になっているので、5倍して元に戻す)
+    let cloudImpact = (100 - cloud) / 100;
+    if (cloudImpact < 0.1) cloudImpact = 0.1; // 0除算防止
+    
+    // Kpの影響を打ち消す (低Kpで確率が抑えられている分を戻す)
+    let kpImpact = (kp + 1) / 5; 
+    if (kpImpact < 0.2) kpImpact = 0.2;
+
+    // これが「雲も磁気嵐も関係ない、その場所自体のオーバル接近度」になります
+    let pureOvalPositionScore = rawProb / (cloudImpact * kpImpact);
+
     const dataValues = [
-        Math.min(lastAuroraProb * 2, 100), // Oval/Horizon (50%以上で満点)
-        Math.min(kp * 12.5, 100),         // Magnetic (Kp 8以上で満点)
-        Math.max(100 - cloud, 0)          // Sky (快晴で満点)
+        // この pureOvalPositionScore を使えば、マップで色が濃い（位置が良い）だけで
+        // 他の要素に関わらず 100 に到達します。
+        Math.min(pureOvalPositionScore * 1.5, 100), 
+        
+        Math.min(kp * 12.5, 100), // Magnetic
+        Math.max(100 - cloud, 0)   // Sky
     ];
+
+
+
+//        Math.min(lastAuroraProb * 2, 100), // Oval/Horizon (50%以上で満点)
+//        Math.min(kp * 12.5, 100),         // Magnetic (Kp 8以上で満点)
+//        Math.max(100 - cloud, 0)          // Sky (快晴で満点)
+//    ];
 
     // 中央の％表示を更新
     const pctText = currentTotalScore < 1 ? "<1%" : (currentTotalScore > 99 ? "99%+" : Math.round(currentTotalScore) + "%");
@@ -1668,98 +2016,155 @@ function initMap() {
         maxZoom: 10, 
         worldCopyJump: true, 
         maxBounds: [[southLimit, -540], [northLimit, 540]], 
-        maxBoundsViscosity: 1.0 
+        maxBoundsViscosity: 1.0
     });
     
-    // Set the default cursor for the map container
     map.getContainer().style.cursor = 'default';
+    map.on('dragstart', function() { map.getContainer().style.cursor = 'grabbing'; });
+    map.on('dragend', function() { map.getContainer().style.cursor = 'default'; });
 
-    // Update cursor during dragging
-    map.on('dragstart', function() {
-        map.getContainer().style.cursor = 'grabbing';
-    });
-
-    map.on('dragend', function() {
-        map.getContainer().style.cursor = 'default';
-});
-    
-
-    // マーカーを最前面に持ってくる設定
     map.createPane('userMarkerPane');
-    map.getPane('userMarkerPane').style.zIndex = 650;　// オーロラ(400)より上に
+    map.getPane('userMarkerPane').style.zIndex = 650; 
 
     const startLat = myLat !== null ? myLat : 70;
     const startLon = myLon !== null ? myLon : 0;
     map.setView([startLat, startLon], 3);
     
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { 
-        noWrap: false 
-    }).addTo(map);
-    
-    // 地図クリック時のイベント
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { noWrap: false }).addTo(map);
+
+    // --- 地図クリック時のイベント ---
     map.on('click', async function(e) {
-        if (!isSelectionMode) return; // 選択モードでないなら、クリックしても何も反応させない
+        if (!isSelectionMode) return; 
         
         const lat = e.latlng.lat;
         const lon = e.latlng.lng;
 
-        // 1. マーカーを選択位置に移動させる
         updateMapMarker(lat, lon);
         
-        // UIを表示状態にする
-        const nameEl = document.getElementById('map-location-name');
-        const btnEl = document.getElementById('btn-confirm-location');
         const cityText = document.getElementById('target-city-name');
+        document.getElementById('map-location-name').style.display = 'block';
+        document.getElementById('btn-confirm-location').style.display = 'block';
+        cityText.textContent = "Analyzing environment...";
         
-        nameEl.style.display = 'block';
-        btnEl.style.display = 'block';
-        cityText.textContent = "Searching...";
-        
-        
-        // 2. 逆ジオコーディングで地名を取得
         try {
-            // OpenStreetMapの無料APIを利用
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=en`);
-            const data = await response.json();
+            // 1. 地名取得
+            // --- ここに「経度の正規化」を挿入します ---
+            const normalizedLon = lon > 180 ? lon - 360 : (lon < -180 ? lon + 360 : lon);
+
+            // 1. 地名取得 (Nominatim)
+            // ※Nominatimも180度超えに厳しい場合があるため、ここでも normalizedLon を使うのが安全です
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${normalizedLon}&zoom=10&accept-language=en`);
+            const geoData = await geoRes.json();
             
-            // 地名（市町村名や州名）を抽出
-            const cityName = data.address.city || data.address.town || data.address.village || data.address.county || data.address.state || "Selected Location";
-            const countryName = data.address.country || "";
-            const displayName = countryName ? `${cityName}, ${countryName}` : cityName;
+            const addr = geoData.address || {};
             
-            // 地名を表示し、一時保存
+            // 地名がない場合の予備（緯度経度）
+            const fallbackCoord = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+            
+            // 市・町・村などが取得できればそれを使い、なければ緯度経度にする
+            const cityName = addr.city || addr.town || addr.village || addr.county || addr.state || fallbackCoord;
+            const countryName = addr.country || "";
+
+            // displayNameの組み立て
+            // 1. cityNameが緯度経度の場合は、国名は出さずに緯度経度のみ表示
+            // 2. 地名が取得できている場合のみ「地名, 国名」の形式にする
+            const displayName = (cityName === fallbackCoord || !countryName) 
+                ? cityName 
+                : `${cityName}, ${countryName}`;
+
+            
+// 2. 光害推定（データの取得のみ）
+            let estimatedBortle = 1; 
+            if (addr.city || addr.metropolis) {
+                estimatedBortle = 8; 
+            } else if (addr.town || addr.borough) {
+                estimatedBortle = 5; 
+            }
+
+            const currentHour = new Date().getHours();
+            const isDaytime = currentHour >= 3 && currentHour < 21; 
+
+            const bortleTextElement = document.getElementById('bortle-level-text');
+            const bortleIconElement = document.getElementById('bortle-icon');
+            const bortleMessageElement = document.getElementById('bortle-message');
+
+            if (bortleTextElement && bortleIconElement) {
+                // 昼間、または光害がない(Bortle < 4)場合は何も表示しない
+                if (isDaytime || estimatedBortle < 4) {
+                    bortleTextElement.textContent = "";
+                    bortleIconElement.src = ""; 
+                    if (bortleMessageElement) bortleMessageElement.textContent = "";
+                } 
+                // 夜間で光害がある(Bortle >= 4)場合のみ、環境情報を表示
+                else {
+                    bortleTextElement.textContent = "Light Polluted Area";
+                    bortleIconElement.src = "bright.png"; // ここでは「光害あり」の警告として使用
+                    if (bortleMessageElement) bortleMessageElement.textContent = "Move to a darker area.";
+                }
+            }
+
+            // 保存（calculateTotalがこの値を使って最終判定を行う）
+            tempLocation = { 
+                lat, 
+                lon, 
+                name: displayName, 
+                bortle: estimatedBortle, 
+                visibility: visibility 
+            };
+
+            // 3. 視程取得 (Open-Meteo)
+            let visibility = 10000; 
+            try {
+                const normalizedLon = lon > 180 ? lon - 360 : (lon < -180 ? lon + 360 : lon);
+                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${normalizedLon}&current=visibility&timezone=auto`);
+                
+                if (weatherRes.ok) {
+                    const weatherData = await weatherRes.json();
+                    if (weatherData.current && weatherData.current.visibility !== undefined) {
+                        visibility = weatherData.current.visibility;
+                        console.log(`Visibility: ${visibility}m (from Open-Meteo)`);
+                    }
+                }
+            } catch (wError) {
+                console.warn("Visibility fetch failed.", wError);
+            }
+
+            // 4. 結果表示と一時保存
             cityText.textContent = displayName;
-            tempLocation = { lat, lon, name: displayName };
+            tempLocation = { 
+                lat, 
+                lon, 
+                name: displayName, 
+                bortle: estimatedBortle, 
+                visibility: visibility 
+            };
 
         } catch (error) {
-            console.error("Map click reverse geocode error:", error);
-            // エラー時は座標を表示して進められるようにする
+            console.error("Analysis error:", error);
             const fallbackName = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
             cityText.textContent = fallbackName;
-            tempLocation = { lat, lon, name: fallbackName };
+            tempLocation = { lat, lon, name: fallbackName, bortle: 5, visibility: 10000 };
         }
-    });
-    
-    // --- 決定ボタンのクリックイベント ---
+    }); // ここでクリックイベントリスナーを閉じる
+
+    // 決定ボタンのクリックイベント
     document.getElementById('btn-confirm-location').onclick = async function() {
         if (!tempLocation) return;
         await setLocation(tempLocation.lat, tempLocation.lon, tempLocation.name);
         hideMapScreen();
     };
-        
-   
-    // オーロラレイヤーの設定
+       
+    // オーロラ描写準備
     if (!window.auroraLayer) {
-        auroraLayer = L.layerGroup().addTo(map); 
+        window.auroraLayer = L.layerGroup().addTo(map); 
     } else {
-        auroraLayer.addTo(map);
+        window.auroraLayer.addTo(map);
     }
-    
-    if (typeof cachedAuroraData !== 'undefined' && cachedAuroraData) {
-        drawAurora(cachedAuroraData); 
-    }
-    updateMapMarker();
 }
+
+
+
+
 
 // グローバル変数と初期設定
 let isSelectionMode = false; // 場所選択モードかどうかのフラグ
@@ -1774,72 +2179,98 @@ window.closeWelcome = function() {
 // 「Select from a Map」ボタンから呼ばれる関数
 function openMapForSelection() {
     isSelectionMode = true; // 選択モードON
-    showMapScreen(); // 地図を表示
+    showMapScreen(true, false);; // 地図を表示
 }
 
-// 既存の「ただ地図を見る」ボタンやメニューから呼ばれる関数
+// 「Aurora Oval」ボタンから呼ばれる関数
 function openMapForViewing() {
-    isSelectionMode = false; // 選択モードOFF
-    // 念のためUIを隠す
+    isSelectionMode = false;
     document.getElementById('map-location-name').style.display = 'none';
     document.getElementById('btn-confirm-location').style.display = 'none';
-    showMapScreen();
+    
+    // 凡例を強制的に表示状態にする
+    const legend = document.getElementById("oval-legend-container");
+    if (legend) legend.style.display = 'block';
+
+    showMapScreen(false, true);
 }
 
 // スイッチと連動するための関数
 function toggleOvalLayer() {
-    const isVisible = document.getElementById("oval-visibility-toggle").checked;
-    
-    // map 変数と auroraLayer 変数が存在することを確認
-    if (typeof map !== 'undefined' && auroraLayer) {
-        if (isVisible) {
-            auroraLayer.addTo(map); // 地図に追加（表示）
-        } else {
-            map.removeLayer(auroraLayer); // 地図から削除（非表示）
+    const oc = document.getElementById("oval-visibility-toggle");
+    const legend = document.getElementById("oval-legend-container"); // 凡例を取得
+    if (!oc || !window.auroraLayer) return;
+
+    // 選択モード中のスイッチ操作、またはOvalモードでの初期表示に対応
+    if (!isSelectionMode || (oc && oc.checked)) {
+        if (legend) legend.style.display = 'block';
+        if (typeof cachedAuroraData !== 'undefined' && cachedAuroraData) {
+            drawAurora(cachedAuroraData);
         }
+    } else {
+        if (legend) legend.style.display = 'none'; // スイッチOFF: オーロラを消し、凡例を隠す
+        window.auroraLayer.clearLayers();
     }
 }
 
+// 強度(0-100)に応じた色を返すカラースケール関数
+function getAuroraColor(intensity) {
+    if (intensity > 90) return '#ff00ff'; // マゼンタ・紫（最強）
+    if (intensity > 75) return '#ff0000'; // 赤
+    if (intensity > 60) return '#ff8c00'; // ダークオレンジ
+    if (intensity > 45) return '#ffd700'; // ゴールド・濃い黄
+    if (intensity > 30) return '#ccff00'; // ライムグリーン
+    if (intensity > 15) return '#00ff00'; // 緑（標準）
+    return '#00ff7f'; // スプリンググリーン（最弱）
+}
+
+
 // オーバル描画関数
 function drawAurora(data) {
-    if (!auroraLayer) return;
-    auroraLayer.clearLayers();
+    if (!window.auroraLayer) return;
+
+    const oc = document.getElementById("oval-visibility-toggle");
+
+    // モードとスイッチの判定
+    if (isSelectionMode && oc && oc.checked === false) {
+        window.auroraLayer.clearLayers();
+        return;
+    }
+
+    window.auroraLayer.clearLayers();
     
-    // オーバル描写
     if (data && data.coordinates) {
         data.coordinates.forEach(p => {
-            if (p[2] > 10) { 
-                let baseLon = p[0] > 180 ? p[0] - 360 : p[0];
-                let color = p[2] > 50 ? '#ff4500' : (p[2] > 25 ? '#ffff00' : '#00ff00');
+            // 重要：配列 p の各要素にアクセスするためのインデックスを追加
+            const lon = p[0];       // 経度
+            const lat = p[1];       // 緯度
+            const intensity = p[2]; // 強度
+
+            if (intensity > 10) { 
+                // 1. 経度の正規化
+                let baseLon = lon > 180 ? lon - 360 : lon;
                 
+                // 2. 強度に応じた色を取得
+                let color = getAuroraColor(intensity);
+                
+                // 3. Leafletに描画
                 [-360, 0, 360].forEach(offset => {
                     L.rectangle(
-                        [[p[1], baseLon + offset], [p[1] + 2, baseLon + 2 + offset]], 
+                        [[lat, baseLon + offset], [lat + 2, baseLon + 2 + offset]], 
                         { 
                             color: color, 
                             weight: 0, 
-                            fillOpacity: p[2] / 100, 
+                            fillColor: color, 
+                            fillOpacity: (intensity / 100) * 0.8, 
                             interactive: false 
                         }
-                    ).addTo(auroraLayer);
+                    ).addTo(window.auroraLayer);
                 });
             }
         });
     }
-
-    // 2. 【スイッチ制御】現在のモードに応じて表示/非表示を切り替え
-    const toggle = document.getElementById("oval-toggle-wrapper");
-    if (toggle) {
-        if (typeof isSelectionMode !== 'undefined' && isSelectionMode === true) {
-            toggle.style.display = "flex";
-        } else {
-            toggle.style.display = "none";
-        }
-    }
-
-    // 3. レイヤーの状態を反映
-    toggleOvalLayer(); 
 }
+    
 
 // 引数を受け取れるように変更（引数がない場合はグローバル変数を使用）
 function updateMapMarker(targetLat = myLat, targetLon = myLon) {
@@ -1864,24 +2295,47 @@ function updateMapMarker(targetLat = myLat, targetLon = myLon) {
     }).addTo(map);
 }
 
-function showMapScreen() {
-    savedScrollY = window.scrollY; // 現在のスクロール位置を記録
+function showMapScreen(isSelection = false, showOvalByDefault = false) {
+    
+    // 画面を切り替える瞬間に、前回の残骸を真っさらに
+    if (window.auroraLayer) window.auroraLayer.clearLayers();
+    
+    isSelectionMode = isSelection;
+    savedScrollY = window.scrollY;
     document.getElementById('home-screen').style.display = 'none';
     document.getElementById('map-screen').style.display = 'block';
+    
+    const ovalCheckbox = document.getElementById("oval-visibility-toggle");
+    const toggleWrapper = document.getElementById("oval-toggle-wrapper");
 
-    // ロケーション選択時はトグルスイッチを表示する
-    const toggle = document.getElementById("oval-toggle-wrapper");
-    if (toggle) {
-        // ロケーション選択モードの時だけスイッチを出し、それ以外（詳細経由など）は隠す
-        if (typeof isSelectionMode !== 'undefined' && isSelectionMode === true) {
-            toggle.style.display = 'flex';
-        } else {
-            toggle.style.display = 'none';
-        }
+    // モードに関わらず、まずチェック状態をセット（描画の基準）
+    if (ovalCheckbox) {
+        ovalCheckbox.checked = showOvalByDefault;
+    }
+
+    // スイッチの見た目の判定(スイッチを描写するかを判定)
+    if (toggleWrapper) {
+        toggleWrapper.style.display = isSelectionMode ? 'inline-flex' : 'none';
     }
 
     setTimeout(() => { 
-        initMap(); 
+        initMap(); // 初回なら作成、2回目以降は何もしない
+
+        // スクロール（表示位置）を初期位置に戻す処理
+        if (map) {
+            const startLat = myLat !== null ? myLat : 70;
+            const startLon = myLon !== null ? myLon : 0;
+            map.setView([startLat, startLon], 3, { 
+                animate: false, 
+                noMoveStart: true 
+            });
+            
+            // 地図の表示崩れを防ぐための再計算
+            map.invalidateSize(); 
+        }
+
+        toggleOvalLayer(); 
+        updateMapMarker(); 
         if (map) map.invalidateSize(); 
     }, 100);
 }
@@ -1907,10 +2361,12 @@ function hideMapScreen() {
 
 function setItemLoading(id, isLoading) {
     const el = document.getElementById(id);
-    if (el && isLoading) {
-        // 砂時計アイコン ⏳ と 斜体の Loading... をセット
+    if (!el) return;
+
+    if (isLoading) {
+        // Loading開始時だけ文字を上書きする
         el.innerHTML = '⏳ <i>Loading...</i>';
-    }
+    } 
 }
 
 function closeWelcome() { document.getElementById('welcome-overlay').style.display = 'none'; }
@@ -1982,39 +2438,43 @@ function toggleData() {
 }
 
 
-// 次回の更新スケジュールを管理する関数
-function scheduleNextUpdate() {
-    const now = new Date();
-    const hour = now.getHours();
 
-    // 昼間 (3:00 - 21:00) は 60分、夜間は 15分
-    const intervalMinutes = (hour >= 3 && hour < 21) ? 60 : 15;
-    const intervalMs = intervalMinutes * 60 * 1000;
+//// 次回の更新スケジュールを管理する関数
+//function scheduleNextUpdate() {
+//    const now = new Date();
+//    const hour = now.getHours();
+//
+//    // 昼間 (3:00 - 21:00) は 60分、夜間は 15分
+//    const intervalMinutes = (hour >= 3 && hour < 21) ? 60 : 15;
+//    const intervalMs = intervalMinutes * 60 * 1000;
+//
+//    console.log(`[Timer] 次回の自動更新は ${intervalMinutes} 分後です。`);
+//
+//    // 重複動作を防ぐために既存のタイマーをクリア
+//    if (window.autoUpdateTimeout) {
+//        clearTimeout(window.autoUpdateTimeout);
+//    }
+//
+//    // 指定時間後に実行
+//    window.autoUpdateTimeout = setTimeout(async () => {
+//        console.log("Auto-update execution started.");
+//        
+//        try {
+//            await updateAll(); // ここで既存の updateAll を呼び出す
+//        } catch (e) {
+//            console.error("Auto-update error:", e);
+//        }
+//
+//        // 実行が終わったら、また次のスケジュールを立てる（再帰呼び出し）
+//        scheduleNextUpdate();
+//    }, intervalMs);
+//}
 
-    console.log(`[Timer] 次回の自動更新は ${intervalMinutes} 分後です。`);
 
-    // 重複動作を防ぐために既存のタイマーをクリア
-    if (window.autoUpdateTimeout) {
-        clearTimeout(window.autoUpdateTimeout);
-    }
 
-    // 指定時間後に実行
-    window.autoUpdateTimeout = setTimeout(async () => {
-        console.log("Auto-update execution started.");
-        
-        try {
-            await updateAll(); // ここで既存の updateAll を呼び出す
-        } catch (e) {
-            console.error("Auto-update error:", e);
-        }
-
-        // 実行が終わったら、また次のスケジュールを立てる（再帰呼び出し）
-        scheduleNextUpdate();
-    }, intervalMs);
-}
 
 // 最初のスケジュールを開始(初回実行のトリガー（ページ読み込み時など）)
-scheduleNextUpdate();
+//scheduleNextUpdate();
 
 
 // 詳細データ（説明文）の定義
@@ -2079,14 +2539,93 @@ function closeImageModal() {
     document.getElementById('imageModal').style.display = 'none';
 }
 
-// 画面が非表示から表示に切り替わった（スマホをロック解除した）瞬間に更新
-// 画面が消えている間は、アプリが勝手にAPI（気象データや磁気データ）を叩きに行かないよう制限がかかる
-//document.addEventListener("visibilitychange", function() {
-//    if (document.visibilityState === 'visible') {
-//        console.log("Welcome back! Updating data...");
-//        updateAll();
-//    }
-//});
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === 'visible') {
+        const now = new Date();
+        const hour = now.getHours();
+        const currentTimeMs = now.getTime();
+
+        // 昼間 (3:00 - 21:00) は 60分、夜間は 15分
+        const waitMinutes = (hour >= 3 && hour < 21) ? 60 : 15;
+        const waitMs = waitMinutes * 60 * 1000;
+
+        // 経過時間を計算
+        const elapsedMs = currentTimeMs - lastUpdateTimestamp;
+
+        if (elapsedMs >= waitMs) {
+            console.log(`[Visibility] ${waitMinutes}分以上経過したため更新します。`);
+            updateAll();
+        } else {
+            const remainingSec = Math.round((waitMs - elapsedMs) / 1000);
+            console.log(`[Visibility] まだ ${remainingSec}秒 待機期間内のため、自動更新をスキップしました。`);
+        }
+    }
+});
+
+// バッジを表示する関数
+function updateGScaleIndicator(kpValue) {
+    const indicator = document.getElementById("g-scale-indicator");
+    if (!indicator) return;
+
+    let gLevel = 0;
+    if (kpValue >= 9) gLevel = 5;
+    else if (kpValue >= 8) gLevel = 4;
+    else if (kpValue >= 7) gLevel = 3;
+    else if (kpValue >= 6) gLevel = 2;
+    else if (kpValue >= 5) gLevel = 1;
+
+    if (gLevel > 0) {
+        // 丸数字に変換 (1->①, 2->②...)
+        const circleNumbers = ["", "①", "②", "③", "④", "⑤"];
+        indicator.textContent = circleNumbers[gLevel];
+        indicator.style.display = "block";
+        // グローバル変数やdatasetに現在のレベルを保存
+        indicator.dataset.level = gLevel;
+    } else {
+        indicator.style.display = "none";
+    }
+}
+
+
+
+// バッジの説明を表示する関数
+function showKpInfo(event) {
+    
+    console.log("バッジがタッチされました。");
+    
+    if (event) event.stopPropagation(); // 親要素（openDetailなど）への連鎖を止める
+    
+    const indicator = document.getElementById("g-scale-indicator");
+    const detailEl = document.getElementById("g-scale-detail");
+    const modalEl = document.getElementById("kp-modal");
+
+    if (!indicator || !detailEl || !modalEl) {
+        console.error("モーダルまたはインジケーターが見つかりません。");
+        return;
+    }
+
+    // datasetからレベルを取得（数値に変換）
+    const level = parseInt(indicator.dataset.level);
+    
+    const descriptions = {
+        1: "<b>G1 (Minor):</b> A small geomagnetic storm. Active auroras may be visible at high latitudes.",
+        2: "<b>G2 (Moderate):</b> A moderate geomagnetic storm. The auroral zone expands southward.",
+        3: "<b>G3 (Strong):</b> A strong geomagnetic storm. Auroras become very bright and widespread.",
+        4: "<b>G4 (Severe):</b> A severe geomagnetic storm. Auroras observed over a wide area.",
+        5: "<b>G5 (Extreme):</b> Historic-level auroras may be seen at low latitudes."
+    };
+
+    // 説明文をセット（該当がない場合はデフォルト文）
+    detailEl.innerHTML = descriptions[level] || "The G-scale indicates geomagnetic storm strength. G1 is minor, while G5 is extreme.";
+    
+    // モーダルを表示
+    modalEl.style.display = "flex";
+}
+
+function closeKpInfo() {
+    document.getElementById("kp-modal").style.display = "none";
+}
+
 </script>
 </body>
 </html>
