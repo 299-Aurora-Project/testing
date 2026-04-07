@@ -1342,7 +1342,8 @@ async function getKp() {
             const tempVal = parseFloat(Array.isArray(entry) ? entry[1] : entry);
             
             if (!isNaN(tempVal)) {
-                val = tempVal;
+                // val = tempVal;
+                val = 6.0; // ★テスト用固定値
                 
                 // 実測値が変わったとき、バッジ（Gスケール）を更新
                 updateGScaleIndicator(val);
@@ -1713,7 +1714,8 @@ async function getCloud(isDaytime = false) {
         }
 
         // 判定ロジック：昼間なら21時の予報、夜なら今の実況を採用
-        let val = isDaytime ? tonightCloud : currentCloudMax;
+        // let val = isDaytime ? tonightCloud : currentCloudMax;
+        let val = 0; // ★テスト用固定値 (Clear)
 
         const el = document.getElementById("cloud");
         if (el) {
@@ -1790,8 +1792,17 @@ let myRadarChart = null;
 
 // Overall Possibility判定ロジック
 function calculateTotal() {
-    const kp = parseFloat(document.getElementById("kp").textContent) || 0;
-    const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
+    // --- 【テスト用修正箇所】 ---
+    // const kp = parseFloat(document.getElementById("kp").textContent) || 0;
+    // const cloud = parseInt(document.getElementById("cloud").dataset.value) || 0;
+    // let currentProb = lastAuroraProb || 0; 
+    
+    const kp = 6.0;            // Kp指数を 6.0 (強い磁気嵐) に設定
+    const cloud = 0;           // 雲量を 0% (快晴) に設定
+    let lastAuroraProb = 40;   // オーロラ確率を 40% に設定
+    // --- 【テスト用修正箇所】ここまで---
+    
+    
     const icon = document.getElementById("status-icon");
     const resEl = document.getElementById("result");
 
