@@ -521,7 +521,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.4</span>
+  <span class="version">v. t1.0.6</span>
 </h1>
             
             
@@ -1175,6 +1175,7 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
         try {
             const registration = await navigator.serviceWorker.ready;
             const sub = await registration.pushManager.getSubscription();
+            
             if (sub) {
                 const payload = {
                     endpoint: sub.endpoint,
@@ -1188,9 +1189,6 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
                     name: "",
                     reset: true // GAS側でH列・I列を掃除
                 };
-                
-                console.log("DEBUG: Preparing to fetch GAS..."); // ログ1
-                console.log("DEBUG: Payload is:", JSON.stringify(payload)); // ログ2
                 
                 await fetch(GAS_URL, { 
                     method: 'POST', 
@@ -1225,15 +1223,21 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
         const targetLon = forcedLon !== null ? forcedLon : (notifLon !== null ? notifLon : myLon);
         
         if (targetLat === null) return false;
-
+        
+        console.log("STEP 1: Checking SW ready...");
         const registration = await navigator.serviceWorker.ready;
+        
+        console.log("STEP 2: Getting Subscription...");
         let sub = await registration.pushManager.getSubscription();
         if (!sub) {
+            console.log("STEP 3: Subscribing to Push Manager (Using PUBLIC_KEY)...");
             sub = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY)
             });
         }
+        
+        console.log("STEP 4: Subscription obtained!");
         
         // 通知対象の名前を確定
         const targetName = notifName || document.getElementById("loc").textContent;
