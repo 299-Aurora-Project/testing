@@ -486,30 +486,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     transition: none;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* --- ネイビー残存箇所の完全グレー化修正 --- */
 
 /* 1. 一番外側（body）を真っ黒に */
@@ -595,21 +571,6 @@ input:checked + .slider {
     color: #94a3b8 !important;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -646,7 +607,7 @@ input:checked + .slider {
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.1</span>
+  <span class="version">v. t1.0.2</span>
 </h1>
             
             
@@ -939,7 +900,7 @@ input:checked + .slider {
 // --- 1. 定数とグローバル変数 ---
 const PUBLIC_KEY = 'BAp0wnGuvaoZk_Q7Bn4H4DWAR2Zdi9juZECl10m290Ff9sAJqiaXepWYvGgbI7WOb9K3O0MOTG8TVi_hg_ovfEg';
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwskiUa9g73AzAHQaZ0jmAoaIQ0BGsWLxTQnc3cS2D8BOA6QZk5MwY54Mw683P5w3g/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxzJs-wUtVrj6F8bJgvt7TkIULylma8nm6HT1F_s-fTEplAJR6vX6yty8tvM39BEq3Y/exec";
 const CORS = GAS_URL + "?url="; // GASプロキシはやめて、安定したAllOriginsに戻します
 
 const KP_URL = "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json";
