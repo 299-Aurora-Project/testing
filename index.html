@@ -521,7 +521,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.1</span>
+  <span class="version">v. t1.0.2</span>
 </h1>
             
             
@@ -1190,6 +1190,9 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
                 };
                 await fetch(GAS_URL, { 
                     method: 'POST', 
+                    
+                    mode: 'no-cors', // ← これを追加：CORSエラーを無視して送信を優先
+                    
                     body: JSON.stringify(payload),
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
