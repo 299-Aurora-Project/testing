@@ -521,7 +521,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.3</span>
+  <span class="version">v. t1.0.4</span>
 </h1>
             
             
@@ -1188,6 +1188,10 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
                     name: "",
                     reset: true // GAS側でH列・I列を掃除
                 };
+                
+                console.log("DEBUG: Preparing to fetch GAS..."); // ログ1
+                console.log("DEBUG: Payload is:", JSON.stringify(payload)); // ログ2
+                
                 await fetch(GAS_URL, { 
                     method: 'POST', 
                     
@@ -1197,6 +1201,7 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
             }
+            console.log("DEBUG: Fetch command sent!"); // ログ3
             return true;
         } catch (e) { return false; }
     }
