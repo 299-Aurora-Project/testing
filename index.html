@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Easy Aurora Forecast v. t1.14.x</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b132b">
+<meta name="theme-color" content="#1a1a1a">
 <link rel="apple-touch-icon
 " href="icon.png">
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-body { font-family: system-ui, sans-serif; background:#0b132b; color:#eaeaea; padding:20px; margin:0; }
+body { font-family: system-ui, sans-serif; background:#1a1a1a; color:#eaeaea; padding:20px; margin:0; }
 .container { max-width:600px; margin: 0 auto; }
 .header-area { display: flex; flex-direction: column; margin-bottom: 10px; }
 .produced-by { font-size: 0.7rem; color: #8b949e; margin-top: -5px; margin-bottom: 10px; align-self: flex-end; }
@@ -19,7 +19,7 @@ body { font-family: system-ui, sans-serif; background:#0b132b; color:#eaeaea; pa
 .title-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; }
 .beta-suffix { font-size: 0.6em; color: #8b949e; font-weight: normal; margin-left: 5px; text-transform: lowercase; }
 h1 { margin: 0; font-size: 1.5rem; }
-.card { background:#1c2541; padding:20px; border-radius:12px; margin-bottom:20px; position: relative; border: 1px solid #30363d; }
+.card { background:#2d2d2d; padding:20px; border-radius:12px; margin-bottom:20px; position: relative; border: 1px solid #30363d; }
 .label-main { font-size: 1.1rem; font-weight: bold; color: #5bc0be; margin-bottom: 0px; }
 .label-sub-current { font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; }
 .value { font-size:1.6em; margin-top:4px; min-height: 1.2em; }
@@ -126,7 +126,7 @@ button:disabled { opacity: 0.3; cursor: not-allowed; }
     box-sizing: border-box;
     border-radius: 5px !important;     /* 他のボタンと統一 */
     border: 1px solid #3a506b;
-    background-color: #0b132b;
+    background-color: #1a1a1a;
     color: #ffffff;
     padding: 10px 15px;
     font-size: 1rem;
@@ -151,11 +151,11 @@ button:disabled { opacity: 0.3; cursor: not-allowed; }
 .loading-text i { font-style: italic; }
 .loading-btn { pointer-events: none; filter: grayscale(0.5); opacity: 0.7; }
 #hidden-data { display: none; }
-.toggle-btn { width: 100%; margin-bottom: 20px; background: #1c2541; border: 1px solid #3a506b; color: #5bc0be; }
-pre { background:#0b132b; padding:12px; border-radius:8px; font-family: monospace; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; border: 1px solid #3a506b; min-height: 50px; }
+.toggle-btn { width: 100%; margin-bottom: 20px; background: #2d2d2d; border: 1px solid #3a506b; color: #5bc0be; }
+pre { background:#1a1a1a; padding:12px; border-radius:8px; font-family: monospace; font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; border: 1px solid #3a506b; min-height: 50px; }
 #welcome-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 30000; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
 .welcome-box {
-    /* メインカラーの #0b132b をベースに、ほんの少しだけ明るくしたネイビー */
+    /* メインカラーの #1a1a1a をベースに、ほんの少しだけ明るくしたネイビー */
     background: #141d38; 
     
     /* 文字色は明るい白系 */
@@ -185,7 +185,7 @@ pre { background:#0b132b; padding:12px; border-radius:8px; font-family: monospac
 @keyframes bounceThin { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-15px); opacity: 1; } }
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 20000; justify-content: center; align-items: center; cursor: pointer; }
 
-.modal-content { background: #1c2541;
+.modal-content { background: #2d2d2d;
 	width: 90%; 
 	max-width: 450px; 
 	padding:25px;
@@ -257,14 +257,14 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* 候補リストの枠 */
 #autocomplete-list {
     position: absolute;
-    border: 1px solid #3a506b !important; /* 上辺の線だけを消す */
+    border: 1px solid #121212 !important; /* 上辺の線だけを消す */
     border-top: none !important;
     z-index: 9999;
     top: 100%;
     left: 0;
     /*  right: 0; right: 0; を消して width: 100% にすることで入力窓と一致させます */
     margin-top: 0px;
-    background-color: #0b132b !important; /* さらに深いネイビーに変更 */
+    background-color: #1a1a1a !important; /* さらに深いネイビーに変更 */
     border-radius: 0 0 5px 5px; /* 下側だけ丸くして一体感を出す */
     border: 1px solid #3a506b !important; /* 境界線を少し明るいネイビーに */
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -288,7 +288,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     width: 220px;
     box-sizing: border-box;
     z-index: 9999;
-    background-color: #0b132b !important;
+    background-color: #1a1a1a !important;
     border: 1px solid #3a506b !important;
     border-top: none !important; /* 上辺を消して一体化 */
     border-radius: 0 0 5px 5px;
@@ -300,12 +300,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 .autocomplete-item {
     color: #ffffff !important;
     padding: 12px 15px;
-    border-bottom: 1px solid #1c2541;
+    border-bottom: 1px solid #2d2d2d;
 }
 
 /* ホバー時は暗めのネイビー */
 .autocomplete-item:hover {
-    background-color: #1c2541 !important;
+    background-color: #2d2d2d !important;
 }
 
 .autocomplete-item:last-child {
@@ -314,7 +314,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* ホバー・タップ時 */
 .autocomplete-item:hover, .autocomplete-item:active {
-    background-color: #1c2541 !important; /* ホバー時は少しだけ明るく
+    background-color: #2d2d2d !important; /* ホバー時は少しだけ明るく
     color: #5bc0be !important; /* オーロラカラーのアクセント */
 }
 
@@ -481,10 +481,135 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* 光るクラス */
 .map-scroll-btn.active-flash {
     background: rgba(91, 192, 190, 0.9) !important;
-    color: #0b132b !important;
+    color: #1a1a1a !important;
     transform: translateY(-50%) scale(0.9);
     transition: none;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- ネイビー残存箇所の完全グレー化修正 --- */
+
+/* 1. 一番外側（body）を真っ黒に */
+body { 
+    font-family: system-ui, sans-serif; 
+    background: #000000 !important; /* 真っ黒 */
+    color: #eaeaea; 
+    padding: 20px; 
+    margin: 0; 
+}
+
+/* ウェルカムボックスの背景をグレーに */
+.welcome-box {
+    background: #2d2d2d !important;
+}
+
+/* 通常ボタン（GPS等）をネイビーからミディアムグレーに */
+button {
+    background: #444 !important;
+}
+
+
+/* 入力窓、プレビュー、オートコンプリートの枠線をグレーに統一 */
+#cityInput, 
+pre, 
+#autocomplete-list, 
+.autocomplete-items,
+.toggle-btn {
+    border-color: #555 !important;
+}
+
+/* 地図画面の指示ガイド */
+.map-instruction {
+    background: rgba(26, 26, 26, 0.9) !important; /* #1a1a1a相当 */
+}
+
+/* 地図スクロールボタン */
+.map-scroll-btn {
+    background: rgba(45, 45, 45, 0.8) !important; /* #2d2d2d相当 */
+    border: 1px solid #555 !important;
+}
+
+/* ローディング中などのバッジ状態 */
+.badge.status {
+    background-color: #333 !important;
+}
+
+/* 1. ラベル（📍Location などのタイトル）をグレーに */
+.label-main {
+    color: #94a3b8 !important; /* 水色から落ち着いたスチールグレーへ */
+}
+
+/* 2. バッジの基本カラーとボーダーをグレーに */
+.version, 
+.beta-suffix,
+.thin-arrow,
+.tap-to-close,
+.map-instruction,
+.map-scroll-btn {
+    color: #94a3b8 !important;
+}
+
+/* 3. 特徴的な水色の枠線をグレーに */
+.welcome-box,
+.modal-content,
+.notification-card {
+    border-color: #475569 !important; /* 少し濃い目のグレー */
+}
+
+/* 4. スイッチがONの時の色もグレー系に（任意） */
+input:checked + .slider {
+    background-color: #64748b !important;
+}
+
+/* 5. リンクやホバー時のアクセントカラー */
+.label-main:hover,
+.toggle-btn {
+    color: #cbd5e1 !important;
+}
+
+/* 6. 特殊な文字色（Advice textなど） */
+.advice-text {
+    color: #94a3b8 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -625,9 +750,9 @@ input:checked + .slider:before { transform: translateX(20px); }
                 <canvas id="kpLineChart"></canvas>
             </div>
             
-<!--テーブル-->   
+<!--テーブル   
                 <pre id="kpForecast" style="margin-top:10px;">--</pre>            
-            
+-->      
         </div>
 
         <div class="card" id="card-cloud-group">
@@ -646,7 +771,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     <div class="modal-content">
         <h2 style="color: #5bc0be; margin-top: 0; font-size: 1.3rem;">Probability Details</h2>
         
-        <div style="border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-bottom: 15px; background: #0b132b;">
+        <div style="border: 1px solid #3a506b; border-radius: 8px; padding: 10px; margin-bottom: 15px; background: #1a1a1a;">
             <strong style="color: #5bc0be;">Thresholds:</strong>
             <ul style="margin: 5px 0; padding-left: 20px; font-size: 0.85rem;">
                 <li><span style="color: #dc2626;">High</span>: 50% or more</li>
@@ -784,7 +909,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div id="map-location-name" style="background: rgba(11, 19, 43, 0.9); color: #5bc0be; padding: 5px 12px; border-radius: 5px; font-size: 0.85rem; margin-bottom: 8px; border: 1px solid #3a506b; display: none; pointer-events: auto; font-family: sans-serif;">
             Selected: <span id="target-city-name">None</span>
         </div>
-        <button id="btn-confirm-location" style="background: #5bc0be; color: #0b132b; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: auto; display: none; font-family: sans-serif;">
+        <button id="btn-confirm-location" style="background: #5bc0be; color: #1a1a1a; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: auto; display: none; font-family: sans-serif;">
             Set this location
         </button>
     </div>
@@ -1224,20 +1349,21 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
         
         if (targetLat === null) return false;
         
-        console.log("STEP 1: Checking SW ready...");
+        // console.log("STEP 1: Checking SW ready...");
         const registration = await navigator.serviceWorker.ready;
         
-        console.log("STEP 2: Getting Subscription...");
+        // console.log("STEP 2: Getting Subscription...");
         let sub = await registration.pushManager.getSubscription();
         if (!sub) {
-            console.log("STEP 3: Subscribing to Push Manager (Using PUBLIC_KEY)...");
+            // console.log("STEP 3: Subscribing to Push Manager (Using PUBLIC_KEY)...");
             sub = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY)
             });
         }
         
-        console.log("STEP 4: Subscription obtained!");
+        // console.log("STEP 4: Subscription obtained!");
+        console.log("--- Subscription obtained.---");
         
         // 通知対象の名前を確定
         const targetName = notifName || document.getElementById("loc").textContent;
@@ -1395,15 +1521,37 @@ async function updateAll() {
         // ★★★ ここからテスト用固定値を注入 ★★★//////////////////////////
         console.log("--- TEST MODE: Forcing ideal values ---");
 
-        kpValue = 5.0;            // 「const」を削除して上書き
+        kpValue = 5.0;            // 数値を上書き
         lastAuroraProb = 30;      // グローバル変数を上書き
         window.myVisibility = 10000; 
         
-        // 雲のデータも上書き
+        // 1. Kp Index の窓を更新
+        const kpEl = document.getElementById("kp");
+        if (kpEl) {
+            kpEl.textContent = kpValue.toFixed(1);
+            kpEl.classList.remove('loading'); // ローディング解除
+        }
+
+        // 2. Aurora Oval の窓を更新
+        const ovalEl = document.getElementById("oval");
+        if (ovalEl) {
+            ovalEl.textContent = "Near Oval"; // テスト値30%ならこれ
+            ovalEl.className = `badge high`; // スタイルを強制適用
+            ovalEl.classList.remove('loading');
+        }
+
+        // 3. 雲のデータ窓を更新
         const cloudEl = document.getElementById("cloud");
         if (cloudEl) {
             cloudEl.dataset.value = "10"; 
             cloudEl.textContent = "10%";
+            cloudEl.className = `badge high`; // 10%ならHigh(良好)
+            cloudEl.classList.remove('loading');
+        }
+        
+        // 4. G-Scaleインジケーター等も連動させる
+        if (typeof updateGScaleIndicator === 'function') {
+            updateGScaleIndicator(kpValue);
         }
         ////////////////////////// ★★★ ここまで ★★★//////////////////////////
         
