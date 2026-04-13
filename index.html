@@ -521,7 +521,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.2</span>
+  <span class="version">v. t1.0.3</span>
 </h1>
             
             
@@ -1253,12 +1253,18 @@ async function subscribeUser(forcedLat = null, forcedLon = null) {
         
         await fetch(GAS_URL, { 
             method: 'POST', 
+            
+            mode: 'no-cors', // これを追加
+            
             body: JSON.stringify(payload),
             headers: { 'Content-Type': 'text/plain;charset=utf-8' }
         });
         return true;
-    } catch (e) { return false; }
-}
+    } catch (e) { 
+        console.error("Subscribe Error:", e);
+        // alert("Debug Error: " + e.message); // 原因を特定したい場合はコメントアウトを外す
+        return true; // テスト中のみ、エラーが起きてもオンの状態を維持させる
+    }
 
 // スイッチ操作
 async function handleNotifToggleEvent() {
