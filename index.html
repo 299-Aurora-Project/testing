@@ -521,7 +521,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <h1>
   Easy Aurora Forecast
   <span class="beta-suffix"></span>
-  <span class="version">v. t1.0.0</span>
+  <span class="version">v. t1.0.1</span>
 </h1>
             
             
@@ -1361,15 +1361,15 @@ async function updateAll() {
         // 通信エラーを避けるため、一つずつ確実に await します
         console.log(`Mode: ${isDaytime ? "Daytime(21:00 forcast)" : "Night(Realtime)"}`);
 
-        const kpValue = await getKp();
+        // const kpValue = await getKp();
         
-        await fetchKp3DayForecast();
+        // await fetchKp3DayForecast();
         console.log("-> ✅Kp3DayForecast data retrieved successfully.");
         
-        await checkOval();
+        // await checkOval();
         console.log(`-> ✅Aurora Oval data retrieved successfully. Score: ${lastAuroraProb}`);
         
-        await getCloud(isDaytime); // 昼夜フラグを渡す
+        // await getCloud(isDaytime); // 昼夜フラグを渡す
         
         
         
